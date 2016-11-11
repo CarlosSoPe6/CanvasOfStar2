@@ -126,6 +126,10 @@
   <ItemGroup>
     <Image Include="image2.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Constants.h" />
+    <ClInclude Include="LinkedList.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\AllegroDeps.1.4.0.0\build\native\AllegroDeps.targets" Condition="Exists('..\packages\AllegroDeps.1.4.0.0\build\native\AllegroDeps.targets')" />

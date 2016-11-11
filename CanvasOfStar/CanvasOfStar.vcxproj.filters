@@ -30,4 +30,12 @@
       <Filter>Archivos de recursos</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LinkedList.h">
+      <Filter>Archivos de código fuente\src</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h">
+      <Filter>Archivos de código fuente\src</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
