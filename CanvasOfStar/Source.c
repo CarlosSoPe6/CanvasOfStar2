@@ -3,20 +3,62 @@
 #include "allegro5/allegro_image.h"
 #include "allegro5/allegro_native_dialog.h"
 
-const float FPS = 60;
+typedef struct square
+{
+	int a;
+} Square;
+
+typedef struct bitMaps
+{
+	int size;
+	float x;
+	float y;
+	float speed;
+	ALLEGRO_BITMAP *image;
+} BitMaps;
+
+typedef struct list
+{
+	BitMaps bitMap;
+	BitMaps *next;
+} BitMapsList;
+
+/**
+ * param: BitMapsList elem
+ * summary: Deletes a element from a list
+ */
+void removeBitMapsListElement(BitMapsList elem);
+void addBitMapsListElemet(const int size,
+	float x,
+	float y,
+	float speed,
+	ALLEGRO_BITMAP * image,
+	BitMapsList list);
+void getBitMapsListElement();
+void update(BitMapsList elem);
+void render(BitMapsList elem);
+bool intersects(BitMapsList elemA, BitMapsList elemB);
+//int getBounds(BitMapsList elem);
+
+const float FPS = 60.0;
 const int SCREEN_W = 800;
 const int SCREEN_H = 600;
 const int IMAGE_SIZE = 32;
+
 enum MYKEYS {
 	KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT
 };
 
 int main(int argc, char **argv) {
 
+	BitMapsList * elementA;
+	BitMapsList * elementA_Connector;
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
-	ALLEGRO_BITMAP  *image = NULL;
+	ALLEGRO_BITMAP *image;
+
+	elementA = (BitMapsList *)malloc(sizeof(BitMapsList));
 
 	float image_x = SCREEN_W / 2.0 - IMAGE_SIZE / 2.0;
 	float image_y = SCREEN_H / 2.0 - IMAGE_SIZE / 2.0;
@@ -171,4 +213,34 @@ int main(int argc, char **argv) {
 	al_destroy_event_queue(event_queue);
 
 	return 0;
+}
+
+void removeBitMapsListElement(BitMapsList elem)
+{
+
+}
+
+void addBitMapsListElemet(const int size, float x, float y, float speed, ALLEGRO_BITMAP * image, BitMapsList list)
+{
+	
+}
+
+void getBitMapsListElement()
+{
+
+}
+
+void update(BitMapsList elem)
+{
+
+}
+
+void render(BitMapsList elem)
+{
+
+}
+
+bool intersects(BitMapsList elemA, BitMapsList elemB)
+{
+
 }
