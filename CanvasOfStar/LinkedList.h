@@ -1,10 +1,5 @@
 #include "allegro5/allegro.h"
 
-typedef struct square
-{
-	int a;
-} Square;
-
 typedef struct bitMaps
 {
 	int size;
@@ -12,12 +7,12 @@ typedef struct bitMaps
 	float y;
 	float speed;
 	ALLEGRO_BITMAP *image;
-} BitMaps;
+} BitMap;
 
 typedef struct list
 {
-	BitMaps bitMap;
-	BitMaps *next;
+	BitMap bitMap;
+	BitMap *next;
 } BitMapsList;
 
 /**

@@ -10,22 +10,23 @@ void render(BitMapsList elem);
 bool intersects(BitMapsList elemA, BitMapsList elemB);
 
 enum MYKEYS {
-	KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT
+	KEY_W, KEY_A, KEY_S, KEY_D
 };
 
 int main(int argc, char **argv) {
 
-	BitMapsList * elementA;
-	BitMapsList * elementA_Connector;
+	//BitMapsList * elementA;
+	//BitMapsList * elementA_Connector;
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
-	ALLEGRO_BITMAP *image;
 
-	elementA = (BitMapsList *)malloc(sizeof(BitMapsList));
+	//create player
+	BitMap player;
+	player.x = SCREEN_W / 2.0 - IMAGE_SIZE / 2.0;
+	player.y = SCREEN_H / 2.0 - IMAGE_SIZE / 2.0;;
 
-	float image_x = SCREEN_W / 2.0 - IMAGE_SIZE / 2.0;
-	float image_y = SCREEN_H / 2.0 - IMAGE_SIZE / 2.0;
+	//elementA = (BitMapsList *)malloc(sizeof(BitMapsList));
 
 	bool key[4] = { false, false, false, false };
 	bool redraw = true;
@@ -62,12 +63,13 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
-	image = al_load_bitmap("image2.png");
+	player.image = al_load_bitmap("image2.png");
+	player.size = 32;
 
-	if (!image) {
+	if (!player.image) {
 		al_show_native_message_box(display, "Error", "Error", "Failed to load image!",
 			NULL, ALLEGRO_MESSAGEBOX_ERROR);
-		al_destroy_bitmap(image);
+		al_destroy_bitmap(player.image);
 		al_destroy_display(display);
 		al_destroy_timer(timer);
 		al_destroy_event_queue(event_queue);
@@ -77,7 +79,7 @@ int main(int argc, char **argv) {
 	event_queue = al_create_event_queue();
 	if (!event_queue) {
 		fprintf(stderr, "failed to create event_queue!\n");
-		al_destroy_bitmap(image);
+		al_destroy_bitmap(player.image);
 		al_destroy_display(display);
 		al_destroy_timer(timer);
 		return -1;
@@ -96,20 +98,20 @@ int main(int argc, char **argv) {
 		al_wait_for_event(event_queue, &ev);
 
 		if (ev.type == ALLEGRO_EVENT_TIMER) {
-			if (key[KEY_UP] && image_y >= 4.0) {
-				image_y -= 4.0;
+			if (key[KEY_W] && player.y >= 4.0) {
+				player.y -= 4.0;
 			}
 
-			if (key[KEY_DOWN] && image_y <= SCREEN_H - IMAGE_SIZE - 4.0) {
-				image_y += 4.0;
+			if (key[KEY_S] && player.y <= SCREEN_H - IMAGE_SIZE - 4.0) {
+				player.y += 4.0;
 			}
 
-			if (key[KEY_LEFT] && image_x >= 4.0) {
-				image_x -= 4.0;
+			if (key[KEY_A] && player.x >= 4.0) {
+				player.x -= 4.0;
 			}
 
-			if (key[KEY_RIGHT] && image_x <= SCREEN_W - IMAGE_SIZE - 4.0) {
-				image_x += 4.0;
+			if (key[KEY_D] && player.x <= SCREEN_W - IMAGE_SIZE - 4.0) {
+				player.x += 4.0;
 			}
 
 			redraw = true;
@@ -119,39 +121,39 @@ int main(int argc, char **argv) {
 		}
 		else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
 			switch (ev.keyboard.keycode) {
-			case ALLEGRO_KEY_UP:
-				key[KEY_UP] = true;
+			case ALLEGRO_KEY_W:
+				key[KEY_W] = true;
 				break;
 
-			case ALLEGRO_KEY_DOWN:
-				key[KEY_DOWN] = true;
+			case ALLEGRO_KEY_S:
+				key[KEY_S] = true;
 				break;
 
-			case ALLEGRO_KEY_LEFT:
-				key[KEY_LEFT] = true;
+			case ALLEGRO_KEY_A:
+				key[KEY_A] = true;
 				break;
 
-			case ALLEGRO_KEY_RIGHT:
-				key[KEY_RIGHT] = true;
+			case ALLEGRO_KEY_D:
+				key[KEY_D] = true;
 				break;
 			}
 		}
 		else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
 			switch (ev.keyboard.keycode) {
-			case ALLEGRO_KEY_UP:
-				key[KEY_UP] = false;
+			case ALLEGRO_KEY_W:
+				key[KEY_W] = false;
 				break;
 
-			case ALLEGRO_KEY_DOWN:
-				key[KEY_DOWN] = false;
+			case ALLEGRO_KEY_S:
+				key[KEY_S] = false;
 				break;
 
-			case ALLEGRO_KEY_LEFT:
-				key[KEY_LEFT] = false;
+			case ALLEGRO_KEY_A:
+				key[KEY_A] = false;
 				break;
 
-			case ALLEGRO_KEY_RIGHT:
-				key[KEY_RIGHT] = false;
+			case ALLEGRO_KEY_D:
+				key[KEY_D] = false;
 				break;
 
 			case ALLEGRO_KEY_ESCAPE:
@@ -165,13 +167,13 @@ int main(int argc, char **argv) {
 
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 
-			al_draw_bitmap(image, image_x, image_y, 0);
+			al_draw_bitmap(player.image, player.x, player.y, 0);
 
 			al_flip_display();
 		}
 	}
 
-	al_destroy_bitmap(image);
+	al_destroy_bitmap(player.image);
 	al_destroy_display(display);
 	al_destroy_timer(timer);
 	al_destroy_event_queue(event_queue);
@@ -191,5 +193,5 @@ void render(BitMapsList elem)
 
 bool intersects(BitMapsList elemA, BitMapsList elemB)
 {
-
+	return false;
 }
