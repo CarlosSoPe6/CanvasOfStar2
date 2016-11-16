@@ -40,14 +40,21 @@ void removeBitMapsListElement(BitMapsList list, BitMap element)
  */
 void addBitMapsListElemet(int size, float x, float y, float speed, float damage, float life, ALLEGRO_BITMAP * image, BitMapsList list, BitMap element)
 {
-	
+	element.damage = damage;
+	element.image = image;
+	element.life = life;
+	element.size = size;
+	element.speed = speed;
+	element.x = x;
+	element.y = y;
+	//TODO add "element" to "list"
 }
 
 /**
  * summary: Gets a element from a list
  */
-BitMap getBitMapsListElement()
+void getBitMapsListElement()
 {
 	//TODO Create algorithm to get elements
-	return NULL;
+	
 }
