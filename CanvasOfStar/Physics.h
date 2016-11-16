@@ -11,12 +11,12 @@
  * summary detects if a BitMap intersects with other
  */
 bool colission(BitMap frendly, BitMap enemy);
-bool intersecs(float enemyX, float enemyY, int enemySize, float frendlyX, float frendlyY, int frendlySize);
+bool intersecs(float aX, float aY, int aSize, float bX, float bY, float bSize);
 
 bool colission(BitMap entyA, BitMap entyB)
 {
 	// is the range between A and B
-	if (intersecs(entyA.x))
+	if (intersecs(entyA.x, entyA.y, entyA.size, entyB.x, entyB.y, entyB.size))
 	{
 		return true;
 	}

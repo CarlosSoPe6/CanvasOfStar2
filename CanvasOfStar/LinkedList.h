@@ -6,6 +6,8 @@ typedef struct bitMaps
 	float x;
 	float y;
 	float speed;
+	float damage;
+	float life;
 	ALLEGRO_BITMAP *image;
 } BitMap;
 
@@ -19,7 +21,7 @@ typedef struct list
  * param: BitMapsList elem
  * summary: Deletes a element from a list
  */
-void removeBitMapsListElement(BitMapsList elem)
+void removeBitMapsListElement(BitMapsList list, BitMap element)
 {
 
 }
@@ -29,19 +31,23 @@ void removeBitMapsListElement(BitMapsList elem)
  * param: float x
  * param: float y
  * param: float speed
+ * param float damage;
+ * param: float life;
  * param: ALLEGRO_BITMAP * image
  * param: BitMapsList list
+ * param BitMap emenent
  * summary: Adds a element from a list
  */
-void addBitMapsListElemet(int size, float x, float y, float speed, ALLEGRO_BITMAP * image, BitMapsList list)
+void addBitMapsListElemet(int size, float x, float y, float speed, float damage, float life, ALLEGRO_BITMAP * image, BitMapsList list, BitMap element)
 {
-
+	
 }
 
 /**
  * summary: Gets a element from a list
  */
-void getBitMapsListElement()
+BitMap getBitMapsListElement()
 {
 	//TODO Create algorithm to get elements
+	return NULL;
 }
