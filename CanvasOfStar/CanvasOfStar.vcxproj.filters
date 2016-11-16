@@ -37,5 +37,11 @@
     <ClInclude Include="Constants.h">
       <Filter>Archivos de código fuente\src</Filter>
     </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Archivos de código fuente\src</Filter>
+    </ClInclude>
+    <ClInclude Include="Intelligence.h">
+      <Filter>Archivos de código fuente\src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,8 +5,6 @@
 #include "LinkedList.h"
 #include "Constants.h"
 
-void update(BitMapsList elem);
-void render(BitMapsList elem);
 bool intersects(BitMapsList elemA, BitMapsList elemB);
 
 enum MYKEYS {
@@ -15,8 +13,6 @@ enum MYKEYS {
 
 int main(int argc, char **argv) {
 
-	//BitMapsList * elementA;
-	//BitMapsList * elementA_Connector;
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
@@ -25,8 +21,6 @@ int main(int argc, char **argv) {
 	BitMap player;
 	player.x = SCREEN_W / 2.0 - IMAGE_SIZE / 2.0;
 	player.y = SCREEN_H / 2.0 - IMAGE_SIZE / 2.0;;
-
-	//elementA = (BitMapsList *)malloc(sizeof(BitMapsList));
 
 	bool key[4] = { false, false, false, false };
 	bool redraw = true;
@@ -179,16 +173,6 @@ int main(int argc, char **argv) {
 	al_destroy_event_queue(event_queue);
 
 	return 0;
-}
-
-void update(BitMapsList elem)
-{
-
-}
-
-void render(BitMapsList elem)
-{
-
 }
 
 bool intersects(BitMapsList elemA, BitMapsList elemB)
