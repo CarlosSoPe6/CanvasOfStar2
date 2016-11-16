@@ -57,6 +57,8 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
+	al_set_window_title(display, "Canvas of Star");
+
 	player.image = al_load_bitmap("image2.png");
 	player.size = 32;
 
