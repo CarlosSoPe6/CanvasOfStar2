@@ -38,7 +38,7 @@ void removeBitMapsListElement(BitMapsList list, BitMap element)
  * param BitMap emenent
  * summary: Adds a element from a list
  */
-void addBitMapsListElemet(int size, float x, float y, float speed, float damage, float life, ALLEGRO_BITMAP * image, BitMapsList list, BitMap element)
+void addBitMapsListElemet(int size, float x, float y, float speed, float damage, float life, ALLEGRO_BITMAP * image, BitMapsList * list, BitMap element)
 {
 	element.damage = damage;
 	element.image = image;
@@ -47,6 +47,7 @@ void addBitMapsListElemet(int size, float x, float y, float speed, float damage,
 	element.speed = speed;
 	element.x = x;
 	element.y = y;
+}
 	//TODO add "element" to "list"
 }
 
