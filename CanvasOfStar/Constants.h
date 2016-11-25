@@ -3,3 +3,13 @@
 #define SCREEN_W 800
 #define SCREEN_H 600
 #define IMAGE_SIZE 32
+#define ACCELERATION 0.3
+#define SPEED_LIMIT 5
+
+enum MYKEYS {
+	KEY_W, KEY_A, KEY_S, KEY_D
+};
+
+enum GAME_STATUS {
+	HOME, INSTRUCTIONS, LV1, LV2, LV3, NO_LIFE, WON
+};

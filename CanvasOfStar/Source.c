@@ -5,11 +5,10 @@
 #include "LinkedList.h"
 #include "Constants.h"
 
-bool intersects(BitMapsList elemA, BitMapsList elemB);
+BitMap player;
 
-enum MYKEYS {
-	KEY_W, KEY_A, KEY_S, KEY_D
-};
+int handleKeyEvents(ALLEGRO_EVENT ev, const bool * key);
+void handleCollitions();
 
 int main(int argc, char **argv) {
 
@@ -17,11 +16,17 @@ int main(int argc, char **argv) {
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
 
-	//create player
-	BitMap player;
-	player.x = SCREEN_W / 2.0 - IMAGE_SIZE / 2.0;
-	player.y = SCREEN_H / 2.0 - IMAGE_SIZE / 2.0;;
-
+	//game states and helpers
+	int gameStatus = LV1;
+	int evtHandlderResult = 0;
+	//init player
+	player.size_x = 32;
+	player.size_y = 32;
+	player.speed_x = SPEED_LIMIT;
+	player.speed_y = SPEED_LIMIT;
+	player.x = SCREEN_W / 2.0 - player.size_x / 2.0;
+	player.y = SCREEN_H / 2.0 - player.size_y / 2.0;
+	
 	bool key[4] = { false, false, false, false };
 	bool redraw = true;
 	bool doexit = false;
@@ -60,7 +65,6 @@ int main(int argc, char **argv) {
 	al_set_window_title(display, "Canvas of Star");
 
 	player.image = al_load_bitmap("image2.png");
-	player.size = 32;
 
 	if (!player.image) {
 		al_show_native_message_box(display, "Error", "Error", "Failed to load image!",
@@ -92,70 +96,111 @@ int main(int argc, char **argv) {
 	{
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
-
-		if (ev.type == ALLEGRO_EVENT_TIMER) {
-			if (key[KEY_W] && player.y >= 4.0) {
-				player.y -= 4.0;
-			}
-
-			if (key[KEY_S] && player.y <= SCREEN_H - IMAGE_SIZE - 4.0) {
-				player.y += 4.0;
-			}
-
-			if (key[KEY_A] && player.x >= 4.0) {
-				player.x -= 4.0;
-			}
-
-			if (key[KEY_D] && player.x <= SCREEN_W - IMAGE_SIZE - 4.0) {
-				player.x += 4.0;
-			}
-
-			redraw = true;
-		}
-		else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-			break;
-		}
-		else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-			switch (ev.keyboard.keycode) {
-			case ALLEGRO_KEY_W:
-				key[KEY_W] = true;
+		if (gameStatus == HOME)
+		{
+			evtHandlderResult = 0;
+			switch (evtHandlderResult)
+			{
+			case -1:
+				redraw = true;
 				break;
-
-			case ALLEGRO_KEY_S:
-				key[KEY_S] = true;
+			case 0:
+				doexit = true;
+				continue;
 				break;
-
-			case ALLEGRO_KEY_A:
-				key[KEY_A] = true;
-				break;
-
-			case ALLEGRO_KEY_D:
-				key[KEY_D] = true;
-				break;
-			}
-		}
-		else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
-			switch (ev.keyboard.keycode) {
-			case ALLEGRO_KEY_W:
-				key[KEY_W] = false;
-				break;
-
-			case ALLEGRO_KEY_S:
-				key[KEY_S] = false;
-				break;
-
-			case ALLEGRO_KEY_A:
-				key[KEY_A] = false;
-				break;
-
-			case ALLEGRO_KEY_D:
-				key[KEY_D] = false;
-				break;
-
-			case ALLEGRO_KEY_ESCAPE:
+			case 1:
 				doexit = true;
 				break;
+			case 2:
+				break;
 			}
+			handleCollitions();
+		}
+		else if (gameStatus == INSTRUCTIONS)
+		{
+			evtHandlderResult = 0;
+			switch (evtHandlderResult)
+			{
+			case -1:
+				redraw = true;
+				break;
+			case 0:
+				doexit = true;
+				continue;
+				break;
+			case 1:
+				doexit = true;
+				break;
+			case 2:
+				break;
+			}
+		}
+		else if (gameStatus == LV1)
+		{
+			evtHandlderResult = handleKeyEvents(ev, key);
+			switch (evtHandlderResult)
+			{
+			case -1:
+				redraw = true;
+				break;
+			case 0:
+				doexit = true;
+				continue;
+				break;
+			case 1:
+				doexit = true;
+				break;
+			case 2:
+				break;
+			}
+			handleCollitions();
+		}
+		else if (gameStatus == LV2)
+		{
+			evtHandlderResult = handleKeyEvents(ev, key);
+			switch (evtHandlderResult)
+			{
+			case -1:
+				redraw = true;
+				break;
+			case 0:
+				doexit = true;
+				continue;
+				break;
+			case 1:
+				doexit = true;
+				break;
+			case 2:
+				break;
+			}
+		}
+		else if (gameStatus == LV3)
+		{
+			evtHandlderResult = handleKeyEvents(ev, key);
+			switch (evtHandlderResult)
+			{
+			case -1:
+				redraw = true;
+				break;
+			case 0:
+				doexit = true;
+				continue;
+				break;
+			case 1:
+				doexit = true;
+				break;
+			case 2:
+				break;
+			}
+			handleCollitions();
+		}
+		else if (gameStatus == NO_LIFE)
+		{
+
+		}
+		else if (gameStatus == WON)
+		{
+
 		}
 
 		if (redraw && al_is_event_queue_empty(event_queue)) {
@@ -177,7 +222,75 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
-bool intersects(BitMapsList elemA, BitMapsList elemB)
+int handleKeyEvents(ALLEGRO_EVENT ev, bool * key)
 {
-	return false;
+	if (ev.type == ALLEGRO_EVENT_TIMER) {
+		if (key[KEY_W] && player.y > 0) {
+			player.y -= player.speed_y;
+		}
+
+		if (key[KEY_S] && player.y < SCREEN_H - player.size_y) {
+			player.y += player.speed_y;
+		}
+
+		if (key[KEY_A] && player.x > 0) {
+			player.x -= player.speed_x;
+		}
+
+		if (key[KEY_D] && player.x < SCREEN_W - player.size_x) {
+			player.x += player.speed_x;
+		}
+
+		return -1;
+	}
+	else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+		return 0;
+	}
+	else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+		switch (ev.keyboard.keycode) {
+		case ALLEGRO_KEY_W:
+			key[KEY_W] = true;
+			break;
+
+		case ALLEGRO_KEY_S:
+			key[KEY_S] = true;
+			break;
+
+		case ALLEGRO_KEY_A:
+			key[KEY_A] = true;
+			break;
+
+		case ALLEGRO_KEY_D:
+			key[KEY_D] = true;
+			break;
+		}
+	}
+	else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
+		switch (ev.keyboard.keycode) {
+		case ALLEGRO_KEY_W:
+			key[KEY_W] = false;
+			break;
+
+		case ALLEGRO_KEY_S:
+			key[KEY_S] = false;
+			break;
+
+		case ALLEGRO_KEY_A:
+			key[KEY_A] = false;
+			break;
+
+		case ALLEGRO_KEY_D:
+			key[KEY_D] = false;
+			break;
+
+		case ALLEGRO_KEY_ESCAPE:
+			return 1;
+		}
+	}
+	return 2;
+}
+
+void handleCollitions()
+{
+
 }
