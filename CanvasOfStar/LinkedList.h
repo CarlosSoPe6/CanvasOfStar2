@@ -1,5 +1,3 @@
-#include "allegro5/allegro.h"
-
 typedef struct bitMaps
 {
 	int size_x;
@@ -11,10 +9,13 @@ typedef struct bitMaps
 	float damage;
 	float life;
 	ALLEGRO_BITMAP *image;
+	ALLEGRO_SAMPLE *shoot;
+	ALLEGRO_SAMPLE *die;
 } BitMap;
 
 typedef struct list
 {
+	BitMap *prev;
 	BitMap bitMap;
 	BitMap *next;
 } BitMapsList;
@@ -42,7 +43,7 @@ void removeBitMapsListElement(BitMapsList list, BitMap element)
  * param: list
  * param: element
  */
-void addBitMapsListElemet(int size_x, int size_y, float x, float y, float speed_x, float speed_y, float damage, float life, ALLEGRO_BITMAP * image, BitMapsList * list, BitMap element)
+void addBitMapsListElemet(int size_x, int size_y, float x, float y, float speed_x, float speed_y, float damage, float life, ALLEGRO_BITMAP * image, ALLEGRO_SAMPLE *shoot, ALLEGRO_SAMPLE *die, BitMap element)
 {
 	element.damage = damage;
 	element.image = image;
@@ -53,6 +54,8 @@ void addBitMapsListElemet(int size_x, int size_y, float x, float y, float speed_
 	element.y = y;
 	element.speed_x = speed_x;
 	element.speed_y = speed_y;
+	element.shoot = shoot;
+	element.die = die;
 
 	//TODO add "element" to "list"
 }
@@ -60,7 +63,7 @@ void addBitMapsListElemet(int size_x, int size_y, float x, float y, float speed_
 /**
  * Gets a element from a list
  */
-void getBitMapsListElement()
+bool next()
 {
 	//TODO Create algorithm to get elements
 	

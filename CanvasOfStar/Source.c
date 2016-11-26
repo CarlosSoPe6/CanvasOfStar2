@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "allegro5/allegro.h"
+#include "allegro5/allegro_audio.h"
 #include "allegro5/allegro_image.h"
 #include "allegro5/allegro_native_dialog.h"
 #include "LinkedList.h"
@@ -49,6 +50,12 @@ int main(int argc, char **argv) {
 	}
 
 	if (!al_init_image_addon()) {
+		al_show_native_message_box(display, "Error", "Error", "Failed to initialize al_init_image_addon!",
+			NULL, ALLEGRO_MESSAGEBOX_ERROR);
+		return 0;
+	}
+
+	if (!al_install_audio()) {
 		al_show_native_message_box(display, "Error", "Error", "Failed to initialize al_init_image_addon!",
 			NULL, ALLEGRO_MESSAGEBOX_ERROR);
 		return 0;
@@ -203,7 +210,7 @@ int main(int argc, char **argv) {
 
 		}
 
-		if (redraw && al_is_event_queue_empty(event_queue)) {
+		if (redraw && al_is_event_queue_empty(event_queue) && (gameStatus >= LV1 && gameStatus <= LV3)) {
 			redraw = false;
 
 			al_clear_to_color(al_map_rgb(0, 0, 0));
