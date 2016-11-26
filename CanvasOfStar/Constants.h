@@ -2,12 +2,13 @@
 #define APS 120.00
 #define SCREEN_W 800
 #define SCREEN_H 600
-#define IMAGE_SIZE 32
+#define IMAGE_SIZE_WIDTH 32
+#define IMAGE_SIZE_HEIGHT 32
 #define ACCELERATION 0.3
 #define SPEED_LIMIT 5
 
 enum MYKEYS {
-	KEY_W, KEY_A, KEY_S, KEY_D
+	KEY_W, KEY_A, KEY_S, KEY_D, KEY_SPACE
 };
 
 enum GAME_STATUS {

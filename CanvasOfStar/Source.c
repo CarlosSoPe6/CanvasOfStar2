@@ -17,18 +17,23 @@ int main(int argc, char **argv) {
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
 
+	ALLEGRO_BITMAP *mainImage = NULL;
+	ALLEGRO_BITMAP *backgroundImage = NULL;
+
 	//game states and helpers
 	int gameStatus = LV1;
+	//FOR DEBUG
+
 	int evtHandlderResult = 0;
 	//init player
-	player.size_x = 32;
-	player.size_y = 32;
+	player.size_x = IMAGE_SIZE_WIDTH * 2;
+	player.size_y = IMAGE_SIZE_HEIGHT * 2;
 	player.speed_x = SPEED_LIMIT;
 	player.speed_y = SPEED_LIMIT;
 	player.x = SCREEN_W / 2.0 - player.size_x / 2.0;
 	player.y = SCREEN_H / 2.0 - player.size_y / 2.0;
 	
-	bool key[4] = { false, false, false, false };
+	bool key[5] = { false, false, false, false, false };
 	bool redraw = true;
 	bool doexit = false;
 
@@ -70,8 +75,10 @@ int main(int argc, char **argv) {
 	}
 
 	al_set_window_title(display, "Canvas of Star");
+	
+	mainImage = al_load_bitmap("images/SPRITES.png");
 
-	player.image = al_load_bitmap("image2.png");
+	player.image = al_create_sub_bitmap(mainImage, 128, 0, player.size_x, player.size_y);
 
 	if (!player.image) {
 		al_show_native_message_box(display, "Error", "Error", "Failed to load image!",
@@ -145,60 +152,43 @@ int main(int argc, char **argv) {
 		else if (gameStatus == LV1)
 		{
 			evtHandlderResult = handleKeyEvents(ev, key);
-			switch (evtHandlderResult)
-			{
-			case -1:
+
+			if (evtHandlderResult < 0) {
 				redraw = true;
-				break;
-			case 0:
+			}
+			else if (evtHandlderResult == 0) {
 				doexit = true;
 				continue;
-				break;
-			case 1:
-				doexit = true;
-				break;
-			case 2:
-				break;
 			}
+
 			handleCollitions();
 		}
 		else if (gameStatus == LV2)
 		{
 			evtHandlderResult = handleKeyEvents(ev, key);
-			switch (evtHandlderResult)
-			{
-			case -1:
+
+			if (evtHandlderResult < 0) {
 				redraw = true;
-				break;
-			case 0:
+			}
+			else if (evtHandlderResult == 0) {
 				doexit = true;
 				continue;
-				break;
-			case 1:
-				doexit = true;
-				break;
-			case 2:
-				break;
 			}
+
+			handleCollitions();
 		}
 		else if (gameStatus == LV3)
 		{
 			evtHandlderResult = handleKeyEvents(ev, key);
-			switch (evtHandlderResult)
-			{
-			case -1:
+
+			if (evtHandlderResult < 0) {
 				redraw = true;
-				break;
-			case 0:
+			}
+			else if (evtHandlderResult == 0) {
 				doexit = true;
 				continue;
-				break;
-			case 1:
-				doexit = true;
-				break;
-			case 2:
-				break;
 			}
+
 			handleCollitions();
 		}
 		else if (gameStatus == NO_LIFE)
@@ -248,6 +238,10 @@ int handleKeyEvents(ALLEGRO_EVENT ev, bool * key)
 			player.x += player.speed_x;
 		}
 
+		if (key[KEY_SPACE]) {
+			//perform shoot
+		}
+
 		return -1;
 	}
 	else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
@@ -270,7 +264,13 @@ int handleKeyEvents(ALLEGRO_EVENT ev, bool * key)
 		case ALLEGRO_KEY_D:
 			key[KEY_D] = true;
 			break;
+
+		case ALLEGRO_KEY_SPACE:
+			key[KEY_SPACE] = true;
+			break;
 		}
+
+
 	}
 	else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
 		switch (ev.keyboard.keycode) {
@@ -290,8 +290,12 @@ int handleKeyEvents(ALLEGRO_EVENT ev, bool * key)
 			key[KEY_D] = false;
 			break;
 
+		case ALLEGRO_KEY_SPACE:
+			key[KEY_SPACE] = false;
+			break;
+
 		case ALLEGRO_KEY_ESCAPE:
-			return 1;
+			return 0;
 		}
 	}
 	return 2;
