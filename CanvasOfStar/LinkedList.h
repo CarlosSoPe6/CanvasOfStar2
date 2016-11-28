@@ -19,6 +19,8 @@ typedef struct list
 	BitMap bitMap;
 	BitMap *next;
 } BitMapsList;
+BitMapsList *first = NULL;
+BitMapsList *last = NULL;
 
 /**
  * param: BitMapsList elem
@@ -45,6 +47,8 @@ void removeBitMapsListElement(BitMapsList list, BitMap element)
  */
 void addBitMapsListElemet(int size_x, int size_y, float x, float y, float speed_x, float speed_y, float damage, float life, ALLEGRO_BITMAP * image, ALLEGRO_SAMPLE *shoot, ALLEGRO_SAMPLE *die, BitMap * element, BitMapsList * list)
 {
+	BitMapsList * nextElement = NULL;
+
 	element->damage = damage;
 	element->image = image;
 	element->life = life;
@@ -57,8 +61,20 @@ void addBitMapsListElemet(int size_x, int size_y, float x, float y, float speed_
 	element->shoot = shoot;
 	element->die = die;
 
-	//TODO add "element" to "list"
+	nextElement->bitMap = element;
 
+	//add "element" to "list"
+	if (first == NULL)
+	{
+		first = nextElement;
+		last = nextElement;
+	}
+	else
+	{
+		last->prev = last;
+		last->next = nextElement;
+		last = nextElement;
+	}
 }
 
 /**
