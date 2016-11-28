@@ -43,31 +43,41 @@ void removeBitMapsListElement(BitMapsList list, BitMap element)
  * param: list
  * param: element
  */
-void addBitMapsListElemet(int size_x, int size_y, float x, float y, float speed_x, float speed_y, float damage, float life, ALLEGRO_BITMAP * image, ALLEGRO_SAMPLE *shoot, ALLEGRO_SAMPLE *die, BitMap element)
+void addBitMapsListElemet(int size_x, int size_y, float x, float y, float speed_x, float speed_y, float damage, float life, ALLEGRO_BITMAP * image, ALLEGRO_SAMPLE *shoot, ALLEGRO_SAMPLE *die, BitMap * element, BitMapsList * list)
 {
-	element.damage = damage;
-	element.image = image;
-	element.life = life;
-	element.size_x = size_x;
-	element.size_y = size_y;
-	element.x = x;
-	element.y = y;
-	element.speed_x = speed_x;
-	element.speed_y = speed_y;
-	element.shoot = shoot;
-	element.die = die;
+	element->damage = damage;
+	element->image = image;
+	element->life = life;
+	element->size_x = size_x;
+	element->size_y = size_y;
+	element->x = x;
+	element->y = y;
+	element->speed_x = speed_x;
+	element->speed_y = speed_y;
+	element->shoot = shoot;
+	element->die = die;
 
 	//TODO add "element" to "list"
+
 }
 
 /**
- * Gets a element from a list
+ * Has a next element
  */
 bool next()
 {
 	//TODO Create algorithm to get elements
 	
 }
+
+/**
+ * Gets the next bit map
+ */
+BitMap getNextBitMap()
+{
+
+}
+
 
 /**
  * Deletes a element from a list
