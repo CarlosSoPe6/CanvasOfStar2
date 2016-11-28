@@ -127,6 +127,23 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="image2.png" />
+    <Image Include="images\b1.png" />
+    <Image Include="images\b2.png" />
+    <Image Include="images\b3.png" />
+    <Image Include="images\bull_1.png" />
+    <Image Include="images\bull_2.png" />
+    <Image Include="images\bull_3.png" />
+    <Image Include="images\bull_4.png" />
+    <Image Include="images\e1.png" />
+    <Image Include="images\e2.png" />
+    <Image Include="images\play.png" />
+    <Image Include="images\SPRITES.png" />
+    <Image Include="images\_b1.png" />
+    <Image Include="images\_b2.png" />
+    <Image Include="images\_b3.png" />
+    <Image Include="images\_e1.png" />
+    <Image Include="images\_e2.png" />
+    <Image Include="images\_play.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animations.h" />
@@ -134,6 +151,12 @@
     <ClInclude Include="Intelligence.h" />
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="Physics.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="sounds\exp0.mp3" />
+    <Media Include="sounds\exp1.mp3" />
+    <Media Include="sounds\las0.wav" />
+    <Media Include="sounds\las1.mp3" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

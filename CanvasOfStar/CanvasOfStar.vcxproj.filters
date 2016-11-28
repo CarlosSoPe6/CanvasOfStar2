@@ -16,6 +16,12 @@
     <Filter Include="Archivos de código fuente\src">
       <UniqueIdentifier>{a1e4bba8-0543-4080-b6c9-87b4d877d0f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de recursos\sonds">
+      <UniqueIdentifier>{f2e43b8b-0db6-463a-bc71-a8e80a32af61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de recursos\images">
+      <UniqueIdentifier>{99ca1ac9-4044-4029-a9f9-91320e5cc7be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -26,8 +32,59 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="images\_b1.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\_b2.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\_b3.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\_e1.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\_e2.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\_play.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\b1.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\b2.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\b3.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\bull_1.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\bull_2.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\bull_3.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\bull_4.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\e1.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\e2.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
     <Image Include="image2.png">
-      <Filter>Archivos de recursos</Filter>
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\play.png">
+      <Filter>Archivos de recursos\images</Filter>
+    </Image>
+    <Image Include="images\SPRITES.png">
+      <Filter>Archivos de recursos\images</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -46,5 +103,19 @@
     <ClInclude Include="Animations.h">
       <Filter>Archivos de código fuente\src</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="sounds\las0.wav">
+      <Filter>Archivos de recursos\sonds</Filter>
+    </Media>
+    <Media Include="sounds\las1.mp3">
+      <Filter>Archivos de recursos\sonds</Filter>
+    </Media>
+    <Media Include="sounds\exp0.mp3">
+      <Filter>Archivos de recursos\sonds</Filter>
+    </Media>
+    <Media Include="sounds\exp1.mp3">
+      <Filter>Archivos de recursos\sonds</Filter>
+    </Media>
   </ItemGroup>
 </Project>
