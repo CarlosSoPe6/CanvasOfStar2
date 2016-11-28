@@ -6,6 +6,11 @@
 #include "LinkedList.h"
 #include "Constants.h"
 
+ALLEGRO_SAMPLE *playerShoot;
+ALLEGRO_SAMPLE *playerDie;
+ALLEGRO_SAMPLE *enemyShoot;
+ALLEGRO_SAMPLE *enemyDie;
+
 BitMap player;
 
 int handleKeyEvents(ALLEGRO_EVENT ev, const bool * key);
@@ -64,6 +69,26 @@ int main(int argc, char **argv) {
 		al_show_native_message_box(display, "Error", "Error", "Failed to initialize al_init_image_addon!",
 			NULL, ALLEGRO_MESSAGEBOX_ERROR);
 		return 0;
+	}
+
+	if (!al_init_acodec_addon()) {
+		fprintf(stderr, "failed to initialize audio codecs!\n");
+		return -1;
+	}
+
+	if (!al_reserve_samples(1)) {
+		fprintf(stderr, "failed to reserve samples!\n");
+		return -1;
+	}
+
+	playerShoot = al_load_sample("sounds/las0.wav");
+	enemyShoot = al_load_sample("sounds/las1.mp3");
+	playerDie = al_load_sample("sounds/exp0.mp3");
+	enemyDie = al_load_sample("sounds/exp1.mp3");
+
+	if (!playerShoot && !enemyShoot && !playerDie && !enemyDie) {
+	printf("Audio clip not loaded!\n");
+	return -1;
 	}
 
 	display = al_create_display(800, 600);
@@ -240,6 +265,7 @@ int handleKeyEvents(ALLEGRO_EVENT ev, bool * key)
 
 		if (key[KEY_SPACE]) {
 			//perform shoot
+			al_play_sample(playerShoot, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
 		}
 
 		return -1;
