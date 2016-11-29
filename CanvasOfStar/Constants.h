@@ -20,6 +20,8 @@
 #define BULLET_SMALL_DAMAGE 50
 #define BULLET_LIFE 1
 
+#define SHOOT_LOCK 20
+
 enum MYKEYS {
 	KEY_W, KEY_A, KEY_S, KEY_D, KEY_SPACE
 };

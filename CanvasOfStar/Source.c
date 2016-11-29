@@ -25,6 +25,9 @@ EntityList *listTypeB;
 
 Entity player;
 
+int shootLock;
+bool canShoot;
+
 int handleKeyEvents(ALLEGRO_EVENT ev, const bool * key);
 void update();
 void handlePlayerShoot();
@@ -45,6 +48,7 @@ int main(int argc, char **argv) {
 	initializeEntityList(listTypeB);
 
 	//game states and helpers
+	//FOR DEBUG
 	int gameStatus = LV1;
 	//FOR DEBUG
 
@@ -60,6 +64,9 @@ int main(int argc, char **argv) {
 	bool key[5] = { false, false, false, false, false };
 	bool redraw = true;
 	bool doexit = false;
+	canShoot = true;
+
+	shootLock = 0;
 
 	if (!al_init()) {
 		al_show_native_message_box(display, "Error", "Error", "Failed to initialize allegro!",
@@ -399,7 +406,7 @@ void update()
 	Entity * element;
 
 	if (backgroundX >= -(SCREEN_W * 2)) {
-		backgroundX = backgroundX - .5;
+		backgroundX = backgroundX - .9;
 	}
 
 	while (hasNext(temp))
@@ -417,10 +424,21 @@ void update()
 			deleteElement(temp);
 		}
 	}
+
+	shootLock++;
+	if (shootLock > SHOOT_LOCK) {
+		canShoot = true;
+		shootLock = 0;
+	}
 }
 
 void handlePlayerShoot()
 {
+	if (!canShoot)
+	{
+		return;
+	}
+	canShoot = false;
 	al_play_sample(playerShoot, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
 	float buX = 0;
 	float buY = 0;
