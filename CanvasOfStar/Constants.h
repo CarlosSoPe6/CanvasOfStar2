@@ -26,6 +26,10 @@
 
 #define SHOOT_LOCK 20
 
+#define ENEMY_LIFE 200
+#define ENEMY_DAMAGE 1000
+#define ENEMY_SPEED_X -5
+
 #define GETTER_ENEMY_XY 0
 #define GETTER_PLAYER_XY 1
 
