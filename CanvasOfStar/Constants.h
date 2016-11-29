@@ -20,15 +20,15 @@
 #define ENEMY_BULLET_SPEED (-6.0)
 
 #define BULLET_SMALL_DAMAGE 50
-#define BULLET_LIFE 1000
+#define BULLET_LIFE 1
 
-#define BOSS_LIFE
+#define BOSS_LIFE 1000
 
 #define SHOOT_LOCK 20
 
 #define ENEMY_LIFE 200
 #define ENEMY_DAMAGE 1000
-#define ENEMY_SPEED_X -5
+#define ENEMY_SPEED_X -6
 
 #define GETTER_ENEMY_XY 0
 #define GETTER_PLAYER_XY 1
