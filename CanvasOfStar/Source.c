@@ -448,8 +448,6 @@ void update()
 		canShoot = true;
 		shootLock = 0;
 	}
-
-	if(isBossSpawned)
 }
 
 void handlePlayerShoot()
