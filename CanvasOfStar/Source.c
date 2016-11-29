@@ -371,6 +371,10 @@ void update()
 			element->x = element->x + element->speed_x;
 			element->y = element->y + element->speed_y;
 		}
+		else
+		{
+			deleteElement(temp);
+		}
 	}
 }
 
