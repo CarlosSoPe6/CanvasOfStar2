@@ -119,7 +119,12 @@ EntityList * getNextEntityList(EntityList * list)
  */
 void deleteElement(EntityList * element)
 {
-	element->next->prev = element->prev;
+	EntityList * tempElement = element->prev;
+	if (element->next != NULL)
+	{
+		element->next->prev = element->prev;
+	}
+	
 	element->prev->next = element->next;
-	free(element);
+	element = tempElement;
 }
