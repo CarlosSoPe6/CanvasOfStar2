@@ -82,8 +82,9 @@ void addEntityListElement(
 	element->shoot = shoot;
 	element->die = die;
 
-	current->next->prev = current;
+	
 	current->next = (EntityList *)malloc(sizeof(EntityList));
+	current->next->prev = current;
 	current->next->entity = element;
 	current->next->next = NULL;
 }
