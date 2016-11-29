@@ -82,7 +82,7 @@ void addEntityListElement(
 	element->shoot = shoot;
 	element->die = die;
 
-	current->prev = NULL;
+	current->next->prev = current;
 	current->next = (EntityList *)malloc(sizeof(EntityList));
 	current->next->entity = element;
 	current->next->next = NULL;
@@ -116,9 +116,9 @@ EntityList * getNextEntityList(EntityList * list)
  * param: element
  * param: list
  */
-void deleteElement(Entity  * element, EntityList * list)
+void deleteElement(EntityList * element)
 {
-	EntityList * tempNode;
-	EntityList * currNode;
-
+	element->next->prev = element->prev;
+	element->prev->next = element->next;
+	free(element);
 }
