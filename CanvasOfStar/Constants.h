@@ -26,6 +26,9 @@
 
 #define SHOOT_LOCK 20
 
+#define GETTER_ENEMY_XY 0
+#define GETTER_PLAYER_XY 1
+
 enum MYKEYS {
 	KEY_W, KEY_A, KEY_S, KEY_D, KEY_SPACE
 };

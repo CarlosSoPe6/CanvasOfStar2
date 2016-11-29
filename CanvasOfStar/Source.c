@@ -7,6 +7,7 @@
 #include "allegro5/allegro_acodec.h"
 #include "LinkedList.h"
 #include "Constants.h"
+#include "Physics.h"
 
 ALLEGRO_SAMPLE *playerShoot;
 ALLEGRO_SAMPLE *playerDie;
@@ -33,6 +34,11 @@ bool isBossSpawned;
 int handleKeyEvents(ALLEGRO_EVENT ev, const bool * key);
 void update();
 void handlePlayerShoot();
+
+void spawnEnemies();
+
+float  getBulletX(Entity element, int type);
+float getBulletY(Entity element);
 
 int main(int argc, char **argv) {
 
@@ -307,6 +313,16 @@ int main(int argc, char **argv) {
 				al_draw_bitmap(element->image, element->x, element->y, 0);
 			}
 
+			temp = listTypeB;
+
+			while (hasNext(temp))
+			{
+				temp = getNextEntityList(temp);
+				element = temp->entity;
+
+				al_draw_bitmap(element->image, element->x, element->y, 0);
+			}
+
 			al_draw_bitmap(player.image, player.x, player.y, 0);
 
 			al_flip_display();
@@ -407,8 +423,11 @@ int handleKeyEvents(ALLEGRO_EVENT ev, bool * key)
 
 void update()
 {
-	EntityList * temp = listTypeA;
-	Entity * element;
+	EntityList * tempA = listTypeA;
+	Entity * elementA;
+
+	EntityList * tempB = listTypeB;
+	Entity * elementB;
 
 	if (!isBossSpawned)
 	{
@@ -427,19 +446,56 @@ void update()
 		//addEntityListElement()
 	}
 
-	while (hasNext(temp))
+	while (hasNext(tempA))
 	{
-		temp = getNextEntityList(temp);
- 		element = temp->entity;
-		if ((element->x <= SCREEN_W && (element->x + element->size_x) >= 0)
-			&& (element->y <= SCREEN_H && (element->y + element->size_y) >= 0))
+		tempA = getNextEntityList(tempA);
+ 		elementA = tempA->entity;
+		if ((elementA->x <= SCREEN_W && (elementA->x + elementA->size_x) >= 0)
+			&& (elementA->y <= SCREEN_H && (elementA->y + elementA->size_y) >= 0))
 		{
-			element->x = element->x + element->speed_x;
-			element->y = element->y + element->speed_y;
+			elementA->x = elementA->x + elementA->speed_x;
+			elementA->y = elementA->y + elementA->speed_y;
+			while (hasNext(tempB))
+			{
+				tempB = getNextEntityList(tempB);
+				elementB = tempB->entity;
+
+				if ((elementA->x <= SCREEN_W && (elementA->x + elementA->size_x) >= 0)
+					&& (elementA->y <= SCREEN_H && (elementA->y + elementA->size_y) >= 0))
+				{
+
+					//routines
+
+					elementB->x = elementB->x + elementB->speed_x;
+					elementB->y = elementB->y + elementB->speed_y;
+
+					//colissions
+
+					if (colission(*elementA, *elementB))
+					{
+						elementA->life = elementA->life - elementB->damage;
+						elementB->life = elementB->life - elementA->damage;
+
+						if (elementA->life <= 0)
+						{
+							deleteElement(tempA);
+						}
+
+						if (elementB->life <= 0)
+						{
+							deleteElement(tempB);
+						}
+					}
+				}
+				else
+				{
+					deleteElement(tempB);
+				}
+			}
 		}
 		else
 		{
-			deleteElement(temp);
+			deleteElement(tempA);
 		}
 	}
 
@@ -458,11 +514,11 @@ void handlePlayerShoot()
 	}
 	canShoot = false;
 	al_play_sample(playerShoot, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
-	float buX = 0;
-	float buY = 0;
+	float buX = 0.0;
+	float buY = 0.0;
 
-	buX = player.x;
-	buY = player.y;
+	buX = getBulletX(player, GETTER_PLAYER_XY);
+	buY = getBulletY(player);
 
 	Entity * element = (Entity *)malloc(sizeof(Entity));
 
@@ -504,4 +560,24 @@ void spawnEnemies()
 
 	al_draw_bitmap(enemy.image, enemy.x, enemy.y, 0);
 
+}
+
+float getBulletX(Entity element, int type)
+{
+	float result = 0.0;
+	if (type == GETTER_ENEMY_XY)
+	{
+		result = (float) element.x;
+	}
+	else if (type == GETTER_PLAYER_XY)
+	{
+		result =(float) (element.x + element.size_x);
+	}
+
+	return result;
+}
+
+float getBulletY(Entity element)
+{
+	return (float) (element.y + (element.size_y / 2.0) - BULLET_SMALL_SIZE_Y / 2);
 }

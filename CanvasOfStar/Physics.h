@@ -1,22 +1,19 @@
 /**
  * This is the code to dectect if there is a colission
  */
+bool colission(Entity frendly, Entity enemy);
+bool intersecs(float aX, float aY, int aSize_x, int aSize_y, float bX, float bY, int bSize_x, int bSize_y);
 
-#include "LinkedList.h"
-
- /**
- * param: BitMapsList frendly
- * param: BitMapsList enemy
- * return: bool
- * summary detects if a BitMap intersects with other
- */
-bool colission(BitMap frendly, BitMap enemy);
-bool intersecs(float aX, float aY, int aSize, float bX, float bY, float bSize);
-
-bool colission(BitMap entyA, BitMap entyB)
+/**
+* param: BitMapsList entyA
+* param: BitMapsList entyB
+* return: bool
+* summary detects if a BitMap intersects with other
+*/
+bool colission(Entity entyA, Entity entyB)
 {
 	// is the range between A and B
-	if (intersecs(entyA.x, entyA.y, entyA.size, entyB.x, entyB.y, entyB.size))
+	if (intersecs(entyA.x, entyA.y, entyA.size_x, entyA.size_y, entyB.x, entyB.y, entyB.size_x, entyB.size_y))
 	{
 		return true;
 	}
@@ -25,28 +22,29 @@ bool colission(BitMap entyA, BitMap entyB)
 }
 
 /**
- * param: float enemyX
- * param: float enemyY
- * param: int enemySize
- * param: float frendlyX
- * param: float frendlyY
- * param: int frendlySize
- * return: bool
- * summary detects if a BitMap intersects with other
+ * float aX
+ * float aY
+ * int aSize_x
+ * int aSize_y
+ * float b
+ * float bY
+ * int bSize_x
+ * int bSize_y
+ * @return: bool
  */
-bool intersecs(float aX, float aY, int aSize, float bX, float bY, float bSize)
+bool intersecs(float aX, float aY, int aSize_x, int aSize_y, float bX, float bY, int bSize_x, int bSize_y)
 {
-	if ((aX < bX) && ((aX + aSize) > bX))
+	if ((aX <= bX) && ((aX + aSize_x) >= bX))
 	{
-		if ((aY < bY) && ((aY + aSize) > bY))
+		if ((aY <= bY) && ((aY + aSize_y) >= bY))
 		{
 			return true;
 		}
 	}
 
-	if (((aX) < (bX + bSize)) && ((aX + aSize) > (bX + bSize)))
+	if (((aX) <= (bX + bSize_x)) && ((aX + aSize_x) >= (bX + bSize_x)))
 	{
-		if (((aY) < (bY + bSize)) && ((aY + aSize) > (bY + bSize)))
+		if (((aY) <= (bY + bSize_y)) && ((aY + aSize_y) >= (bY + bSize_y)))
 		{
 			return true;
 		}

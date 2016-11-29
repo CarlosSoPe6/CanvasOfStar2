@@ -1,7 +1,7 @@
 typedef struct ennts
 {
-	int size_x;
-	int size_y;
+	float size_x;
+	float size_y;
 	float x;
 	float y;
 	float speed_x;
@@ -22,6 +22,7 @@ typedef struct list
 
 /**
  * Inits EntityList
+ * param: EntityList * list
  */
 void initializeEntityList(EntityList * list)
 {
@@ -91,6 +92,7 @@ void addEntityListElement(
 
 /**
  * Has a next element
+ * param: EntityList * list
  */
 bool hasNext(EntityList * list)
 {
@@ -104,6 +106,7 @@ bool hasNext(EntityList * list)
 
 /**
  * Gets the next bit map
+ * param: EntityList * list
  */
 EntityList * getNextEntityList(EntityList * list)
 {
@@ -114,8 +117,7 @@ EntityList * getNextEntityList(EntityList * list)
 
 /**
  * Deletes a element from a list
- * param: element
- * param: list
+ * param: EntityList * element
  */
 void deleteElement(EntityList * element)
 {
