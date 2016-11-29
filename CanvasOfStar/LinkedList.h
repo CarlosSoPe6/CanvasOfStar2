@@ -1,4 +1,4 @@
-typedef struct bitMaps
+typedef struct ennts
 {
 	int size_x;
 	int size_y;
@@ -11,24 +11,23 @@ typedef struct bitMaps
 	ALLEGRO_BITMAP *image;
 	ALLEGRO_SAMPLE *shoot;
 	ALLEGRO_SAMPLE *die;
-} BitMap;
+} Entity;
 
 typedef struct list
 {
-	BitMap *prev;
-	BitMap *bitMap;
-	BitMap *next;
-} BitMapsList;
-BitMapsList *first = NULL;
-BitMapsList *last = NULL;
+	struct list * prev;
+	struct list *next;
+	Entity *entity;
+} EntityList;
 
 /**
- * param: BitMapsList elem
- * summary: Deletes a element from a list
+ * Inits EntityList
  */
-void removeBitMapsListElement(BitMapsList list, BitMap element)
+void initializeEntityList(EntityList * list)
 {
-
+	list->next = NULL;
+	list->prev = NULL;
+	list->entity = NULL;
 }
 
 /**
@@ -45,8 +44,29 @@ void removeBitMapsListElement(BitMapsList list, BitMap element)
  * param: list
  * param: element
  */
-void addBitMapsListElemet(int size_x, int size_y, float x, float y, float speed_x, float speed_y, float damage, float life, ALLEGRO_BITMAP * image, ALLEGRO_SAMPLE *shoot, ALLEGRO_SAMPLE *die, BitMap * element, BitMapsList * list)
+void addEntityListElement(
+	int size_x, 
+	int size_y, 
+	float x, 
+	float y, 
+	float speed_x, 
+	float speed_y, 
+	float damage, 
+	float life, 
+	ALLEGRO_BITMAP * image, 
+	ALLEGRO_SAMPLE * shoot, 
+	ALLEGRO_SAMPLE * die, 
+	Entity * element, 
+	EntityList * list)
 {
+	EntityList * current = list;
+
+	while (current->next != NULL)
+	{
+		current = current->next;
+	}
+
+	//init element
 	element->damage = damage;
 	element->image = image;
 	element->life = life;
@@ -58,36 +78,36 @@ void addBitMapsListElemet(int size_x, int size_y, float x, float y, float speed_
 	element->speed_y = speed_y;
 	element->shoot = shoot;
 	element->die = die;
+	element->image = image;
+	element->shoot = shoot;
+	element->die = die;
 
-	list->bitMap = element;
-	//add "element" to "list"
-	if (first == NULL)
-	{
-		first = list;
-		last = list;
-	}
-	else
-	{
-		last->next = list;
-		last = list;
-	}
+	current->prev = NULL;
+	current->next = (EntityList *)malloc(sizeof(EntityList));
+	current->next->entity = element;
+	current->next->next = NULL;
 }
 
 /**
  * Has a next element
  */
-bool next()
+bool hasNext(EntityList * list)
 {
-	//TODO Create algorithm to get elements
-	
+	if (list->next == NULL)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 /**
  * Gets the next bit map
  */
-BitMap getNextBitMap()
+EntityList * getNextEntityList(EntityList * list)
 {
-
+	//TODO do this
+	return list->next;
 }
 
 
@@ -96,7 +116,9 @@ BitMap getNextBitMap()
  * param: element
  * param: list
  */
-void deleteElement(BitMap element, BitMapsList list)
+void deleteElement(Entity  * element, EntityList * list)
 {
+	EntityList * tempNode;
+	EntityList * currNode;
 
 }

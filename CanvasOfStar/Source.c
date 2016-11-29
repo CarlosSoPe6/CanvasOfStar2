@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include "allegro5/allegro.h"
-#include "allegro5/allegro_audio.h"
 #include "allegro5/allegro_image.h"
 #include "allegro5/allegro_native_dialog.h"
+#include "allegro5/allegro_audio.h"
+#include "allegro5/allegro_acodec.h"
 #include "LinkedList.h"
 #include "Constants.h"
 
@@ -11,10 +12,18 @@ ALLEGRO_SAMPLE *playerDie;
 ALLEGRO_SAMPLE *enemyShoot;
 ALLEGRO_SAMPLE *enemyDie;
 
-BitMap player;
+ALLEGRO_BITMAP *shootA;
+
+// List aux
+EntityList *listTypeA;
+
+EntityList *listTypeB;
+
+Entity player;
 
 int handleKeyEvents(ALLEGRO_EVENT ev, const bool * key);
-void handleCollitions();
+void update();
+void handlePlayerShoot();
 
 int main(int argc, char **argv) {
 
@@ -24,6 +33,12 @@ int main(int argc, char **argv) {
 
 	ALLEGRO_BITMAP *mainImage = NULL;
 	ALLEGRO_BITMAP *backgroundImage = NULL;
+
+	listTypeA = (EntityList*)malloc(sizeof(EntityList));
+	listTypeB = (EntityList*)malloc(sizeof(EntityList));
+
+	initializeEntityList(listTypeA);
+	initializeEntityList(listTypeB);
 
 	//game states and helpers
 	int gameStatus = LV1;
@@ -81,6 +96,8 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 
+	al_reserve_samples(100);
+
 	playerShoot = al_load_sample("sounds/las0.wav");
 	enemyShoot = al_load_sample("sounds/las1.mp3");
 	playerDie = al_load_sample("sounds/exp0.mp3");
@@ -91,7 +108,7 @@ int main(int argc, char **argv) {
 	return -1;
 	}
 
-	display = al_create_display(800, 600);
+	display = al_create_display(SCREEN_W, SCREEN_H);
 
 	if (!display) {
 		al_show_native_message_box(display, "Error", "Error", "Failed to initialize display!",
@@ -103,6 +120,7 @@ int main(int argc, char **argv) {
 	
 	mainImage = al_load_bitmap("images/SPRITES.png");
 
+	shootA = al_create_sub_bitmap(mainImage, 224, 0, BULLET_SMALL_SIZE_X, BULLET_SMALL_SIZE_Y);
 	player.image = al_create_sub_bitmap(mainImage, 128, 0, player.size_x, player.size_y);
 
 	if (!player.image) {
@@ -153,7 +171,7 @@ int main(int argc, char **argv) {
 			case 2:
 				break;
 			}
-			handleCollitions();
+			
 		}
 		else if (gameStatus == INSTRUCTIONS)
 		{
@@ -186,7 +204,7 @@ int main(int argc, char **argv) {
 				continue;
 			}
 
-			handleCollitions();
+			update();
 		}
 		else if (gameStatus == LV2)
 		{
@@ -200,7 +218,7 @@ int main(int argc, char **argv) {
 				continue;
 			}
 
-			handleCollitions();
+			update();
 		}
 		else if (gameStatus == LV3)
 		{
@@ -214,7 +232,7 @@ int main(int argc, char **argv) {
 				continue;
 			}
 
-			handleCollitions();
+			update();
 		}
 		else if (gameStatus == NO_LIFE)
 		{
@@ -225,10 +243,20 @@ int main(int argc, char **argv) {
 
 		}
 
-		if (redraw && al_is_event_queue_empty(event_queue) && (gameStatus >= LV1 && gameStatus <= LV3)) {
-			redraw = false;
+		if (true && (gameStatus >= LV1 && gameStatus <= LV3)) {
 
 			al_clear_to_color(al_map_rgb(0, 0, 0));
+
+			EntityList * temp = listTypeA;
+			Entity * element;
+
+			while (hasNext(temp))
+			{
+				temp = getNextEntityList(temp);
+				element = temp->entity;
+				
+				al_draw_bitmap(element->image, element->x, element->y, 0);
+			}
 
 			al_draw_bitmap(player.image, player.x, player.y, 0);
 
@@ -265,7 +293,7 @@ int handleKeyEvents(ALLEGRO_EVENT ev, bool * key)
 
 		if (key[KEY_SPACE]) {
 			//perform shoot
-			al_play_sample(playerShoot, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
+			handlePlayerShoot();
 		}
 
 		return -1;
@@ -327,7 +355,48 @@ int handleKeyEvents(ALLEGRO_EVENT ev, bool * key)
 	return 2;
 }
 
-void handleCollitions()
-{
 
+void update()
+{
+	EntityList * temp = listTypeA;
+	Entity * element;
+
+	while (hasNext(temp))
+	{
+		temp = getNextEntityList(temp);
+		element = temp->entity;
+		if ((element->x <= SCREEN_W && (element->x + element->size_x) >= 0)
+			&& (element->y <= SCREEN_H && (element->y + element->size_y) >= 0))
+		{
+			element->x = element->x + element->speed_x;
+			element->y = element->y + element->speed_y;
+		}
+	}
+}
+
+void handlePlayerShoot()
+{
+	al_play_sample(playerShoot, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
+	float buX = 0;
+	float buY = 0;
+
+	buX = player.x;
+	buY = player.y;
+
+	Entity * element = (Entity *)malloc(sizeof(Entity));
+
+	addEntityListElement(
+		BULLET_SMALL_SIZE_X,
+		BULLET_SMALL_SIZE_Y,
+		buX,
+		buY,
+		PLAYER_BULLET_SPEED,
+		0,
+		BULLET_SMALL_DAMAGE,
+		BULLET_LIFE,
+		shootA,
+		NULL,
+		NULL,
+		element,
+		listTypeA);
 }
