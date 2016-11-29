@@ -14,6 +14,10 @@ ALLEGRO_SAMPLE *enemyShoot;
 ALLEGRO_SAMPLE *enemyDie;
 
 ALLEGRO_BITMAP *shootA;
+ALLEGRO_BITMAP *enemyAImage = NULL;
+ALLEGRO_BITMAP *enemyBImage = NULL;
+ALLEGRO_BITMAP *enemyBulletImage = NULL;
+
 
 //background
 ALLEGRO_BITMAP *background[3];
@@ -32,6 +36,7 @@ bool canShoot;
 int handleKeyEvents(ALLEGRO_EVENT ev, const bool * key);
 void update();
 void handlePlayerShoot();
+void spawnEnemies();
 
 int main(int argc, char **argv) {
 
@@ -137,6 +142,8 @@ int main(int argc, char **argv) {
 	background[2] = al_load_bitmap("images/back_level3.bmp");
 
 	mainImage = al_load_bitmap("images/SPRITES.png");
+	enemyAImage = al_load_bitmap("images/_b1.png");
+	enemyAImage = al_load_bitmap("images/_b2.png");
 
 	shootA = al_create_sub_bitmap(mainImage, 224, 0, BULLET_SMALL_SIZE_X, BULLET_SMALL_SIZE_Y);
 	player.image = al_create_sub_bitmap(mainImage, 128, 0, player.size_x, player.size_y);
@@ -469,24 +476,37 @@ void handlePlayerShoot()
 
 void spawnEnemies()
 {
-	ALLEGRO_BITMAP *enemyImage = NULL;
+	Entity * enemy;
+	enemy = (Entity*)malloc(sizeof(Entity));
 
-	Entity enemy;
-	enemy.damage = 1000;
-	enemy.life = 200;
-	enemy.size_x = 96;
-	enemy.size_y = 96;
-	enemy.x = SCREEN_W;
-	enemy.y = (rand() % (SCREEN_H - 96));
-
+	ALLEGRO_BITMAP * enemyImage = NULL;
 	if ((rand() % 2) == 0)
-		enemyImage = al_load_bitmap("images/_b1.png");
+		enemyImage = enemyAImage;
 
 	else
-		enemyImage = al_load_bitmap("images/_b2.png");
+		enemyImage = enemyBImage;
 
-	enemy.image = enemyImage;
+	addEntityListElement(
+		IMAGE_SIZE_HEIGHT * 3,
+		IMAGE_SIZE_WIDTH * 3,
+		SCREEN_W,
+		(rand() % (SCREEN_H - 96)),
+		ENEMY_SPEED_X,
+		0,
+		ENEMY_DAMAGE,
+		ENEMY_LIFE,
+		enemyImage,
+		enemyShoot,
+		enemyDie,
+		enemy,
+		listTypeB
+	);
+	/*enemy.damage = ENEMY_DAMAGE;
+	enemy.life = ENEMY_LIFE;
+	enemy.size_x = IMAGE_SIZE_HEIGHT * 3;
+	enemy.size_y = IMAGE_SIZE_HEIGHT * 3;
+	enemy.x = SCREEN_W;
+	enemy.y = (rand() % (SCREEN_H - 96));*/
 
-	al_draw_bitmap(enemy.image, enemy.x, enemy.y, 0);
-
+	//al_draw_bitmap(enemy->image, enemy->x, enemy->y, 0);
 }

@@ -22,6 +22,10 @@
 
 #define SHOOT_LOCK 20
 
+#define ENEMY_LIFE 200
+#define ENEMY_DAMAGE 1000
+#define ENEMY_SPEED_X -5
+
 enum MYKEYS {
 	KEY_W, KEY_A, KEY_S, KEY_D, KEY_SPACE
 };
