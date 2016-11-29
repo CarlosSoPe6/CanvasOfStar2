@@ -14,6 +14,10 @@ ALLEGRO_SAMPLE *enemyDie;
 
 ALLEGRO_BITMAP *shootA;
 
+//background
+ALLEGRO_BITMAP *background[3];
+float backgroundX = 0.0;
+
 // List aux
 EntityList *listTypeA;
 
@@ -118,10 +122,41 @@ int main(int argc, char **argv) {
 
 	al_set_window_title(display, "Canvas of Star");
 	
+	background[0] = al_load_bitmap("images/back_level1.bmp");
+	background[1] = al_load_bitmap("images/back_level2.bmp");
+	background[2] = al_load_bitmap("images/back_level3.bmp");
+
 	mainImage = al_load_bitmap("images/SPRITES.png");
 
 	shootA = al_create_sub_bitmap(mainImage, 224, 0, BULLET_SMALL_SIZE_X, BULLET_SMALL_SIZE_Y);
 	player.image = al_create_sub_bitmap(mainImage, 128, 0, player.size_x, player.size_y);
+
+	if (!background[0]) {
+		al_show_native_message_box(display, "Error", "Error", "Failed to load image!",
+			NULL, ALLEGRO_MESSAGEBOX_ERROR);
+		al_destroy_display(display);
+		al_destroy_timer(timer);
+		al_destroy_event_queue(event_queue);
+		return 0;
+	}
+
+	if (!background[1]) {
+		al_show_native_message_box(display, "Error", "Error", "Failed to load image!",
+			NULL, ALLEGRO_MESSAGEBOX_ERROR);
+		al_destroy_display(display);
+		al_destroy_timer(timer);
+		al_destroy_event_queue(event_queue);
+		return 0;
+	}
+
+	if (!background[2]) {
+		al_show_native_message_box(display, "Error", "Error", "Failed to load image!",
+			NULL, ALLEGRO_MESSAGEBOX_ERROR);
+		al_destroy_display(display);
+		al_destroy_timer(timer);
+		al_destroy_event_queue(event_queue);
+		return 0;
+	}
 
 	if (!player.image) {
 		al_show_native_message_box(display, "Error", "Error", "Failed to load image!",
@@ -246,6 +281,8 @@ int main(int argc, char **argv) {
 		if (true && (gameStatus >= LV1 && gameStatus <= LV3)) {
 
 			al_clear_to_color(al_map_rgb(0, 0, 0));
+			
+			al_draw_bitmap(background[gameStatus - 2], backgroundX, 0, 0);
 
 			EntityList * temp = listTypeA;
 			Entity * element;
@@ -361,15 +398,23 @@ void update()
 	EntityList * temp = listTypeA;
 	Entity * element;
 
+	if (backgroundX >= -(SCREEN_W * 2)) {
+		backgroundX = backgroundX - .5;
+	}
+
 	while (hasNext(temp))
 	{
 		temp = getNextEntityList(temp);
-		element = temp->entity;
+ 		element = temp->entity;
 		if ((element->x <= SCREEN_W && (element->x + element->size_x) >= 0)
 			&& (element->y <= SCREEN_H && (element->y + element->size_y) >= 0))
 		{
 			element->x = element->x + element->speed_x;
 			element->y = element->y + element->speed_y;
+		}
+		else
+		{
+			deleteElement(temp);
 		}
 	}
 }
