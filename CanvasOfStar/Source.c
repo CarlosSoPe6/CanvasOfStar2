@@ -27,6 +27,7 @@ Entity player;
 
 int shootLock;
 bool canShoot;
+bool isBossSpawned;
 
 int handleKeyEvents(ALLEGRO_EVENT ev, const bool * key);
 void update();
@@ -65,6 +66,7 @@ int main(int argc, char **argv) {
 	bool redraw = true;
 	bool doexit = false;
 	canShoot = true;
+	isBossSpawned = false;
 
 	shootLock = 0;
 
@@ -405,8 +407,21 @@ void update()
 	EntityList * temp = listTypeA;
 	Entity * element;
 
-	if (backgroundX >= -(SCREEN_W * 2)) {
-		backgroundX = backgroundX - .9;
+	if (!isBossSpawned)
+	{
+		if (backgroundX >= -(SCREEN_W * 2)) {
+			backgroundX = backgroundX - .9;
+		}
+		else
+		{
+			isBossSpawned = true;
+			//spawn boss;
+		}
+	}
+	else
+	{
+		//handle each level boss
+		//addEntityListElement()
 	}
 
 	while (hasNext(temp))
@@ -430,6 +445,8 @@ void update()
 		canShoot = true;
 		shootLock = 0;
 	}
+
+	if(isBossSpawned)
 }
 
 void handlePlayerShoot()
