@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 #include "allegro5/allegro.h"
 #include "allegro5/allegro_image.h"
 #include "allegro5/allegro_native_dialog.h"
@@ -39,6 +40,8 @@ int main(int argc, char **argv) {
 
 	initializeEntityList(listTypeA);
 	initializeEntityList(listTypeB);
+
+	srand(time(NULL));
 
 	//game states and helpers
 	int gameStatus = LV1;
@@ -403,4 +406,28 @@ void handlePlayerShoot()
 		NULL,
 		element,
 		listTypeA);
+}
+
+void spawnEnemies()
+{
+	ALLEGRO_BITMAP *enemyImage = NULL;
+
+	Entity enemy;
+	enemy.damage = 1000;
+	enemy.life = 200;
+	enemy.size_x = 96;
+	enemy.size_y = 96;
+	enemy.x = SCREEN_W;
+	enemy.y = (rand() % (SCREEN_H - 96));
+
+	if ((rand() % 2) == 0)
+		enemyImage = al_load_bitmap("images/_b1.png");
+
+	else
+		enemyImage = al_load_bitmap("images/_b2.png");
+
+	enemy.image = enemyImage;
+
+	al_draw_bitmap(enemy.image, enemy.x, enemy.y, 0);
+
 }
