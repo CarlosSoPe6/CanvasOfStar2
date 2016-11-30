@@ -2,23 +2,21 @@
  * This is the file for the inteligence
  */
 
-#include "LinkedList.h"
+void intelligentEnemyMove(Entity frendly, Entity * enemy);
+void intelligentBossMove(Entity frendly, Entity * boss);
 
-void intelligentEnemyMove(BitMap frendly, BitMap enemy);
-void intelligentBossMove(BitMap frendly, BitMap boss, BitMap bullet);
-
-void intelligentEnemyMove(BitMap frendly, BitMap enemy)
+void intelligentEnemyMove(Entity frendly, Entity * enemy)
 {
-	if (frendly.y < enemy.y)
+	if (frendly.y < enemy->y)
 	{
-		enemy.y -= 10.0;
+		enemy->speed_y = -3;
 	}
-	else if (frendly.y < enemy.y)
+	else if (frendly.y > enemy->y)
 	{
-		enemy.y += 10.0;
+		enemy->speed_y = 3;
 	}
 }
 
-void intelligentBossMove(BitMap frendly, BitMap boss, BitMap bullet) {
+void intelligentBossMove(Entity frendly, Entity * boss) {
 
 }

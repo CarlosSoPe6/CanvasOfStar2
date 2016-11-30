@@ -8,6 +8,9 @@
 #include "LinkedList.h"
 #include "Constants.h"
 #include "Physics.h"
+#include "Intelligence.h"
+
+ALLEGRO_DISPLAY *display;
 
 ALLEGRO_SAMPLE *playerShoot;
 ALLEGRO_SAMPLE *playerDie;
@@ -18,6 +21,11 @@ ALLEGRO_BITMAP *shootA;
 ALLEGRO_BITMAP *enemyAImage = NULL;
 ALLEGRO_BITMAP *enemyBImage = NULL;
 ALLEGRO_BITMAP *enemyBulletImage = NULL;
+
+ALLEGRO_BITMAP *newNormal;
+ALLEGRO_BITMAP *newHover;
+ALLEGRO_BITMAP *insNormal;
+ALLEGRO_BITMAP *insHover;
 
 
 //background
@@ -46,13 +54,15 @@ float  getBulletX(Entity element, int type);
 float getBulletY(Entity element);
 
 int main(int argc, char **argv) {
-
-	ALLEGRO_DISPLAY *display = NULL;
+	
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
 
 	ALLEGRO_BITMAP *mainImage = NULL;
-	ALLEGRO_BITMAP *backgroundImage = NULL;
+	ALLEGRO_BITMAP *mainButtons;
+
+	float mx = 0.0;
+	float my = 0.0;
 
 	listTypeA = (EntityList*)malloc(sizeof(EntityList));
 	listTypeB = (EntityList*)malloc(sizeof(EntityList));
@@ -60,11 +70,13 @@ int main(int argc, char **argv) {
 	initializeEntityList(listTypeA);
 	initializeEntityList(listTypeB);
 
+	display = NULL;
+
 	srand(time(NULL));
 
 	//game states and helpers
 	//FOR DEBUG
-	int gameStatus = LV1;
+	int gameStatus = HOME;
 	//FOR DEBUG
 
 	int evtHandlderResult = 0;
@@ -79,6 +91,8 @@ int main(int argc, char **argv) {
 	bool key[5] = { false, false, false, false, false };
 	bool redraw = true;
 	bool doexit = false;
+	bool clicked = false;
+
 	canShoot = true;
 	isBossSpawned = false;
 
@@ -92,6 +106,11 @@ int main(int argc, char **argv) {
 
 	if (!al_install_keyboard()) {
 		fprintf(stderr, "failed to initialize the keyboard!\n");
+		return -1;
+	}
+
+	if (!al_install_mouse()) {
+		fprintf(stderr, "failed to initialize the mouse!\n");
 		return -1;
 	}
 
@@ -135,6 +154,9 @@ int main(int argc, char **argv) {
 	return -1;
 	}
 
+	player.shoot = playerShoot;
+	player.die = playerDie;
+
 	display = al_create_display(SCREEN_W, SCREEN_H);
 
 	if (!display) {
@@ -150,6 +172,13 @@ int main(int argc, char **argv) {
 	background[2] = al_load_bitmap("images/back_level3.bmp");
 
 	mainImage = al_load_bitmap("images/SPRITES.png");
+
+	mainButtons = al_load_bitmap("images/BUTTONS.jpg");
+	newNormal = al_create_sub_bitmap(mainButtons, 0, 0, BUTTON_W, BUTTON_H);
+	newHover = al_create_sub_bitmap(mainButtons, 0, 50, BUTTON_W, BUTTON_H);
+	insNormal = al_create_sub_bitmap(mainButtons, 0, 100, BUTTON_W, BUTTON_H);
+	insHover = al_create_sub_bitmap(mainButtons, 0, 150, BUTTON_W, BUTTON_H);
+
 	enemyAImage = al_load_bitmap("images/_b1.png");
 	enemyAImage = al_load_bitmap("images/_b2.png");
 
@@ -205,6 +234,7 @@ int main(int argc, char **argv) {
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
+	al_register_event_source(event_queue, al_get_mouse_event_source());
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 	al_flip_display();
 	al_start_timer(timer);
@@ -213,74 +243,28 @@ int main(int argc, char **argv) {
 	{
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
-		if (gameStatus == HOME)
-		{
-			evtHandlderResult = 0;
-			switch (evtHandlderResult)
-			{
-			case -1:
-				redraw = true;
-				break;
-			case 0:
-				doexit = true;
-				continue;
-				break;
-			case 1:
-				doexit = true;
-				break;
-			case 2:
-				break;
-			}
-			
-		}
-		else if (gameStatus == INSTRUCTIONS)
-		{
-			evtHandlderResult = 0;
-			switch (evtHandlderResult)
-			{
-			case -1:
-				redraw = true;
-				break;
-			case 0:
-				doexit = true;
-				continue;
-				break;
-			case 1:
-				doexit = true;
-				break;
-			case 2:
-				break;
-			}
-		}
-		else if (gameStatus == LV1)
-		{
-			evtHandlderResult = handleKeyEvents(ev, key);
 
-			if (evtHandlderResult < 0) {
-				redraw = true;
-			}
-			else if (evtHandlderResult == 0) {
-				doexit = true;
-				continue;
+		if (ev.type == ALLEGRO_EVENT_TIMER) {
+			redraw = true;
+		}
+
+		if (gameStatus == HOME || gameStatus == INSTRUCTIONS)
+		{
+			if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+				break;
 			}
 
-			update();
-		}
-		else if (gameStatus == LV2)
-		{
-			evtHandlderResult = handleKeyEvents(ev, key);
-
-			if (evtHandlderResult < 0) {
-				redraw = true;
-			}
-			else if (evtHandlderResult == 0) {
-				doexit = true;
-				continue;
+			else if (ev.type == ALLEGRO_EVENT_MOUSE_AXES ||
+				ev.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY) {
+				mx = ev.mouse.x;
+				my = ev.mouse.y;
 			}
 
-			update();
+			else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
+				clicked = true;
+			}
 		}
-		else if (gameStatus == LV3)
+		else if (gameStatus == LV1 || gameStatus == LV2 || gameStatus == LV3)
 		{
 			evtHandlderResult = handleKeyEvents(ev, key);
 
@@ -303,7 +287,9 @@ int main(int argc, char **argv) {
 
 		}
 
-		if (true && (gameStatus >= LV1 && gameStatus <= LV3)) {
+		if (gameStatus >= LV1 && gameStatus <= LV3) {
+
+			redraw = false;
 
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 			
@@ -331,6 +317,61 @@ int main(int argc, char **argv) {
 			}
 
 			al_draw_bitmap(player.image, player.x, player.y, 0);
+
+			al_flip_display();
+		}
+		else if (redraw && gameStatus == HOME)
+		{
+			redraw = false;
+			al_clear_to_color(al_map_rgb(0, 0, 0));
+
+			if (mx >= 100 && mx <= 100 + BUTTON_W && my >= 300 && my <= 300 + BUTTON_H)
+			{
+				al_draw_bitmap(newHover, 100, 300, 0);
+				if (clicked)
+				{
+					gameStatus = LV1;
+					clicked = false;
+				}
+			}
+			else
+			{
+				al_draw_bitmap(newNormal, 100, 300, 0);
+			}
+
+			if (mx >= 900 && mx <= 900 + BUTTON_W && my >= 300 && my <= 300 + BUTTON_H)
+			{
+				al_draw_bitmap(insHover, 900, 300, 0);
+				if (clicked)
+				{
+					gameStatus = INSTRUCTIONS;
+					clicked = false;
+				}
+			}
+			else
+			{
+				al_draw_bitmap(insNormal, 900, 300, 0);
+			}
+			
+			al_flip_display();
+		}
+		else if (redraw && gameStatus == INSTRUCTIONS)
+		{
+			redraw = false;
+			al_clear_to_color(al_map_rgb(0, 0, 0));
+			if (mx >= 100 && mx <= 100 + BUTTON_W && my >= 300 && my <= 300 + BUTTON_H)
+			{
+				al_draw_bitmap(newHover, 100, 300, 0);
+				if (clicked)
+				{
+					gameStatus = LV1;
+					clicked = false;
+				}
+			}
+			else
+			{
+				al_draw_bitmap(newNormal, 100, 300, 0);
+			}
 
 			al_flip_display();
 		}
@@ -472,6 +513,13 @@ void update()
 				{
 
 					//routines
+					if (elementB->type == ENEMY_STARCRAFT_INTELLIGENT)
+					{
+						intelligentEnemyMove(player, elementB);
+					}
+
+					//handle game status
+					if (elementB->type == BIG_BOSS && false) {}
 
 					elementB->x = elementB->x + elementB->speed_x;
 					elementB->y = elementB->y + elementB->speed_y;
@@ -490,6 +538,10 @@ void update()
 
 						if (elementB->life <= 0)
 						{
+							if (elementB->type == BIG_BOSS)
+							{
+								//handel new game status
+							}
 							deleteElement(tempB);
 						}
 					}
@@ -520,7 +572,7 @@ void handlePlayerShoot()
 		return;
 	}
 	canShoot = false;
-	al_play_sample(playerShoot, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
+	al_play_sample(player.shoot, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
 	float buX = 0.0;
 	float buY = 0.0;
 
