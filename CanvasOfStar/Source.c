@@ -46,12 +46,11 @@ int gameStatus;
 bool canShoot;
 bool isBossSpawned;
 bool mouseFlag;
+bool enemySpawned;
 
 int handleKeyEvents(ALLEGRO_EVENT ev, const bool * key);
 void update();
 void handlePlayerShoot();
-void spawnEnemies();
-
 void spawnEnemies();
 
 float  getBulletX(Entity element, int type);
@@ -100,6 +99,7 @@ int main(int argc, char **argv) {
 	canShoot = true;
 	isBossSpawned = false;
 	mouseFlag = false;
+	enemySpawned = false;
 
 	shootLock = 0;
 
@@ -508,9 +508,8 @@ void update()
 
 	if (!isBossSpawned)
 	{
-		if (backgroundX >= -((SCREEN_W) * 2)) 
-		{
-			backgroundX = backgroundX - 5;
+		if (backgroundX >= -(SCREEN_W * 2)) {
+			backgroundX = backgroundX - .9;
 		}
 		else
 		{
@@ -651,6 +650,7 @@ void update()
 		canShoot = true;
 		shootLock = 0;
 	}
+	
 }
 
 void handlePlayerShoot()
@@ -687,40 +687,45 @@ void handlePlayerShoot()
 }
 
 void spawnEnemies()
+
 {
-	Entity * enemy;
-	enemy = (Entity*)malloc(sizeof(Entity));
+	if (enemySpawned)
+		return;
+
+	enemySpawned = true;
+	int dy = (rand() % (SCREEN_H - 96)); //El valor de 'y' donde va a hacer spawn
+	int enemyType;
+
+	Entity * enemy = (Entity*)malloc(sizeof(Entity));
 
 	ALLEGRO_BITMAP * enemyImage = NULL;
-	if ((rand() % 2) == 0)
+	if ((rand() % 2) == 0)// El enemigo es normal, sin inteligencia
+	{
 		enemyImage = enemyAImage;
-
-	else
+		enemyType = ENEMY_STARCRAFT;
+	}
+	else //El enemigo es inteligente
+	{
 		enemyImage = enemyBImage;
+		enemyType = ENEMY_STARCRAFT_INTELLIGENT;
+	}
 
 	addEntityListElement(
-		IMAGE_SIZE_HEIGHT * 3,
-		IMAGE_SIZE_WIDTH * 3,
+		IMAGE_SIZE_HEIGHT * 2,
+		IMAGE_SIZE_WIDTH * 2,
 		SCREEN_W,
-		(rand() % (SCREEN_H - 96)),
+		dy,
 		ENEMY_SPEED_X,
 		0,
 		ENEMY_DAMAGE,
 		ENEMY_LIFE,
-		NULL,
+		enemyType,
 		enemyImage,
 		enemyShoot,
 		enemyDie,
 		enemy,
 		listTypeB
 	);
-	/*enemy.damage = ENEMY_DAMAGE;
-	enemy.life = ENEMY_LIFE;
-	enemy.size_x = IMAGE_SIZE_HEIGHT * 3;
-	enemy.size_y = IMAGE_SIZE_HEIGHT * 3;
-	enemy.x = SCREEN_W;
-	enemy.y = (rand() % (SCREEN_H - 96));*/
-
 }
 
 float getBulletX(Entity element, int type)
