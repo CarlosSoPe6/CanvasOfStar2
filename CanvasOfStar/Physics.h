@@ -1,7 +1,7 @@
 /**
  * This is the code to dectect if there is a colission
  */
-bool colission(Entity frendly, Entity enemy);
+bool colission(Entity *entyA, Entity *entyB);
 bool intersecs(float aX, float aY, int aSize_x, int aSize_y, float bX, float bY, int bSize_x, int bSize_y);
 
 /**
@@ -10,10 +10,23 @@ bool intersecs(float aX, float aY, int aSize_x, int aSize_y, float bX, float bY,
 * return: bool
 * summary detects if a BitMap intersects with other
 */
-bool colission(Entity entyA, Entity entyB)
+bool colission(Entity *entyA, Entity *entyB)
 {
+#ifdef DEBUG
+		printf_s("Ax: %f, ", entyA->x);
+		printf_s("Ay: %f, ", entyA->y);
+		printf_s("Af: %c\n", entyA->updateFlag ? 'V' : 'F');
+		printf("---------------------------------------\n");
+		printf_s("Bx: %f, ", entyB->x);
+		printf_s("By: %f, ", entyB->y);
+		printf_s("Bf: %c\n", entyB->updateFlag ? 'V' : 'F');
+		printf("---------------------------------------\n");
+
+
+#endif // DEBUG
+
 	// is the range between A and B
-	if (intersecs(entyA.x, entyA.y, entyA.size_x, entyA.size_y, entyB.x, entyB.y, entyB.size_x, entyB.size_y))
+	if (intersecs(entyA->x, entyA->y, entyA->size_x, entyA->size_y, entyB->x, entyB->y, entyB->size_x, entyB->size_y))
 	{
 		return true;
 	}

@@ -1,3 +1,5 @@
+float backgroundX = 0.0;
+
 #include <stdio.h>
 #include <time.h>
 #include "allegro5/allegro.h"
@@ -31,7 +33,6 @@ ALLEGRO_BITMAP *insHover;
 
 //background
 ALLEGRO_BITMAP *background[3];
-float backgroundX = 0.0;
 
 // List aux
 EntityList *listTypeA;
@@ -268,23 +269,34 @@ int main(int argc, char **argv) {
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
 
-		if (ev.type == ALLEGRO_EVENT_TIMER) {
+		if (ev.type == ALLEGRO_EVENT_TIMER) 
+		{
 			redraw = true;
+		}
+
+		if (ev.type == ALLEGRO_KEY_ESCAPE)
+		{
+			doexit = true;
+			continue;
+		}
+
+		if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+			doexit = true;
+			continue;
 		}
 
 		if (gameStatus == HOME || gameStatus == INSTRUCTIONS)
 		{
-			if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-				break;
-			}
 
-			else if (ev.type == ALLEGRO_EVENT_MOUSE_AXES ||
-				ev.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY) {
+			if (ev.type == ALLEGRO_EVENT_MOUSE_AXES ||
+				ev.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY) 
+			{
 				mx = ev.mouse.x;
 				my = ev.mouse.y;
 			}
 
-			else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
+			else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) 
+			{
 				clicked = true;
 			}
 		}
@@ -297,7 +309,8 @@ int main(int argc, char **argv) {
 			}
 			evtHandlderResult = handleKeyEvents(ev, key);
 
-			if (evtHandlderResult < 0) {
+			if (evtHandlderResult < 0) 
+			{
 				redraw = true;
 			}
 			else if (evtHandlderResult == 0) {
@@ -416,35 +429,44 @@ int main(int argc, char **argv) {
 
 int handleKeyEvents(ALLEGRO_EVENT ev, bool * key)
 {
-	if (ev.type == ALLEGRO_EVENT_TIMER) {
-		if (key[KEY_W] && player.y > 0) {
+	if (ev.type == ALLEGRO_EVENT_TIMER) 
+	{
+		if (key[KEY_W] && player.y > 0) 
+		{
 			player.y -= player.speed_y;
 		}
 
-		if (key[KEY_S] && player.y < SCREEN_H - player.size_y) {
+		if (key[KEY_S] && player.y < SCREEN_H - player.size_y) 
+		{
 			player.y += player.speed_y;
 		}
 
-		if (key[KEY_A] && player.x > 0) {
+		if (key[KEY_A] && player.x > 0) 
+		{
 			player.x -= player.speed_x;
 		}
 
-		if (key[KEY_D] && player.x < SCREEN_W - player.size_x) {
+		if (key[KEY_D] && player.x < SCREEN_W - player.size_x) 
+		{
 			player.x += player.speed_x;
 		}
 
-		if (key[KEY_SPACE]) {
+		if (key[KEY_SPACE]) 
+		{
 			//perform shoot
 			handlePlayerShoot();
 		}
 
 		return -1;
 	}
-	else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+	else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) 
+	{
 		return 0;
 	}
-	else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-		switch (ev.keyboard.keycode) {
+	else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) 
+	{
+		switch (ev.keyboard.keycode) 
+		{
 		case ALLEGRO_KEY_W:
 			key[KEY_W] = true;
 			break;
@@ -466,10 +488,11 @@ int handleKeyEvents(ALLEGRO_EVENT ev, bool * key)
 			break;
 		}
 
-
 	}
-	else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
-		switch (ev.keyboard.keycode) {
+	else if (ev.type == ALLEGRO_EVENT_KEY_UP) 
+	{
+		switch (ev.keyboard.keycode)
+		{
 		case ALLEGRO_KEY_W:
 			key[KEY_W] = false;
 			break;
@@ -489,9 +512,6 @@ int handleKeyEvents(ALLEGRO_EVENT ev, bool * key)
 		case ALLEGRO_KEY_SPACE:
 			key[KEY_SPACE] = false;
 			break;
-
-		case ALLEGRO_KEY_ESCAPE:
-			return 0;
 		}
 	}
 	return 2;
@@ -524,7 +544,7 @@ void update()
 		}
 
 		if (backgroundX >= -(SCREEN_W * 2)) {
-			backgroundX = backgroundX - 5;
+			backgroundX = backgroundX - .9;
 		}
 		else
 		{
@@ -560,8 +580,10 @@ void update()
 		elementA = &player;
 	}
 
+	setFlagEnabled(true, listTypeB);
+
 	while (helper)
-	{
+	 {
 		helper = false;
 		if ((elementA->x < (SCREEN_W + 6) && (elementA->x + elementA->size_x) > -6)
 			&& (elementA->y < (SCREEN_H + 6) && (elementA->y + elementA->size_y) > -6))
@@ -579,7 +601,7 @@ void update()
 
 				if ((elementB->x < SCREEN_W + 6 && (elementB->x + elementB->size_x) > -6)
 					&& (elementB->y < SCREEN_H + 6 && (elementB->y + elementB->size_y) > -6))
-				{	
+				{
 					if (elementB->updateFlag)
 					{
 						elementB->updateFlag = false;
@@ -604,13 +626,14 @@ void update()
 						elementB->y = elementB->y + elementB->speed_y;
 						elementB->updateFlag = false;
 					}
-
 					//colissions
 
-					if (colission(*elementA, *elementB))
+					if (colission(elementA, elementB))
 					{
 						elementA->life = elementA->life - elementB->damage;
 						elementB->life = elementB->life - elementA->damage;
+
+						printf_s("WE HAVE A COLLITION\n");
 
 						if (elementA->life <= 0)
 						{
@@ -629,12 +652,11 @@ void update()
 						{
 							if (elementB->type != ENEMY_BULLET)
 							{
-								
+								al_play_sample(elementB->die, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
 							}
 							
 							if (elementB->type == BIG_BOSS)
 							{
-								al_play_sample(elementB->die, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
 								isBossSpawned = false;
 								backgroundX = 0;
 								gameStatus++;
@@ -662,7 +684,6 @@ void update()
 			helper = true;
 		}
 	}
-	setFlagEnabled(true, listTypeB);
 	
 }
 
