@@ -307,6 +307,9 @@ int main(int argc, char **argv) {
 				al_uninstall_mouse();
 				mouseFlag = true;
 			}
+
+			update();
+
 			evtHandlderResult = handleKeyEvents(ev, key);
 
 			if (evtHandlderResult < 0) 
@@ -317,8 +320,6 @@ int main(int argc, char **argv) {
 				doexit = true;
 				continue;
 			}
-
-			update();
 		}
 		else if (gameStatus == NO_LIFE)
 		{
@@ -628,7 +629,7 @@ void update()
 					}
 					//colissions
 
-					if (colission(elementA, elementB))
+					if (colission(*elementA, *elementB))
 					{
 						elementA->life = elementA->life - elementB->damage;
 						elementB->life = elementB->life - elementA->damage;
@@ -661,7 +662,7 @@ void update()
 								backgroundX = 0;
 								gameStatus++;
 							}
-							deleteElement(tempB);
+ 							deleteElement(tempB);
 						}
 
 					}
