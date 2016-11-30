@@ -28,7 +28,7 @@
 
 #define ENEMY_LIFE 200
 #define ENEMY_DAMAGE 1000
-#define ENEMY_SPEED_X -4
+#define ENEMY_SPEED_X -2
 
 #define GETTER_ENEMY_XY 0
 #define GETTER_PLAYER_XY 1

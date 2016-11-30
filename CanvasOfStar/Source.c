@@ -18,6 +18,8 @@ ALLEGRO_SAMPLE *enemyShoot;
 ALLEGRO_SAMPLE *enemyDie;
 
 ALLEGRO_BITMAP *shootA;
+ALLEGRO_BITMAP *shootB;
+ALLEGRO_BITMAP *shootC;//El de el jefe
 ALLEGRO_BITMAP *enemyAImage = NULL;
 ALLEGRO_BITMAP *enemyBImage = NULL;
 ALLEGRO_BITMAP *enemyBulletImage = NULL;
@@ -52,6 +54,7 @@ bool mouseFlag;
 int handleKeyEvents(ALLEGRO_EVENT ev, const bool * key);
 void update();
 void handlePlayerShoot();
+void handleEnemyShoot(Entity enemy);
 void spawnEnemies();
 
 float  getBulletX(Entity element, int type);
@@ -204,6 +207,8 @@ int main(int argc, char **argv) {
 	enemyBImage = al_create_sub_bitmap(mainImage, 64, 0, IMAGE_SIZE_WIDTH * 2, IMAGE_SIZE_HEIGHT * 2);
 
 	shootA = al_create_sub_bitmap(mainImage, 224, 0, BULLET_SMALL_SIZE_X, BULLET_SMALL_SIZE_Y);
+	shootB = al_create_sub_bitmap(mainImage, 192, 32, BULLET_SMALL_SIZE_X, BULLET_SMALL_SIZE_Y);
+	shootC = al_create_sub_bitmap(mainImage, 224, 32, BULLET_SMALL_SIZE_X, BULLET_SMALL_SIZE_Y);
 	player.image = al_create_sub_bitmap(mainImage, 128, 0, player.size_x, player.size_y);
 	Boss[0] = al_create_sub_bitmap(mainImage, 0, IMAGE_SIZE_HEIGHT * 2, IMAGE_SIZE_WIDTH * 3, IMAGE_SIZE_HEIGHT * 3);
 	Boss[1] = al_create_sub_bitmap(mainImage, IMAGE_SIZE_WIDTH * 3, IMAGE_SIZE_HEIGHT * 2, IMAGE_SIZE_WIDTH * 3, IMAGE_SIZE_HEIGHT * 3);
@@ -506,6 +511,8 @@ void update()
 	EntityList * tempB = listTypeB;
 	Entity * elementB;
 
+	enemySpawnCounter++;
+
 	shootLock++;
 	if (shootLock > SHOOT_LOCK) {
 		canShoot = true;
@@ -514,7 +521,6 @@ void update()
 
 	if (!isBossSpawned)
 	{
-		enemySpawnCounter++;
 		if (enemySpawnCounter % 450 == 0)
 		{
 			spawnEnemies();
@@ -588,9 +594,14 @@ void update()
 						{
 							intelligentEnemyMove(player, elementB);
 						}
+						if ((elementB->type == ENEMY_STARCRAFT || elementB->type == ENEMY_STARCRAFT_INTELLIGENT) && enemySpawnCounter % 160 == 0)
+						{
+							handleEnemyShoot(*elementB);
+						}
 
 						if (elementB->type == BIG_BOSS) 
 						{
+							printf_s("Hola\n");
 							if (elementB->y < 0)
 							{
 								elementB->speed_y = 3;
@@ -599,6 +610,12 @@ void update()
 							{
 								elementB->speed_y = -3;
 							}
+							if (enemySpawnCounter % 160 == 0)
+							{
+								handleEnemyShoot(*elementB);
+								printf_s("Hola");
+							}
+			
 						}
 						elementB->x = elementB->x + elementB->speed_x;
 						elementB->y = elementB->y + elementB->speed_y;
@@ -701,7 +718,7 @@ void handlePlayerShoot()
 
 void spawnEnemies()
 {
-	int dy = (rand() % (SCREEN_H - 96)); //El valor de 'y' donde va a hacer spawn
+	int dy = (rand() % (SCREEN_H - 64)); //El valor de 'y' donde va a hacer spawn
 	int enemyType;
 
 	Entity * enemy = (Entity*)malloc(sizeof(Entity));
@@ -754,4 +771,37 @@ float getBulletX(Entity element, int type)
 float getBulletY(Entity element)
 {
 	return (float) (element.y + (element.size_y / 2.0) - BULLET_SMALL_SIZE_Y / 2);
+}
+
+void handleEnemyShoot(Entity enemy)
+{
+	ALLEGRO_BITMAP *currentShoot = shootB;
+	al_play_sample(enemyShoot, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
+	float buX = 0.0;
+	float buY = 0.0;
+
+	buX = getBulletX(enemy, GETTER_ENEMY_XY);
+	buY = getBulletY(enemy);
+
+	Entity * element = (Entity *)malloc(sizeof(Entity));
+
+	if (enemy.type == BIG_BOSS)
+		currentShoot = shootC;
+	
+
+	addEntityListElement(
+		BULLET_SMALL_SIZE_X,
+		BULLET_SMALL_SIZE_Y,
+		buX,
+		buY,
+		ENEMY_BULLET_SPEED,
+		0,
+		BULLET_SMALL_DAMAGE,
+		BULLET_LIFE,
+		ENEMY_BULLET,
+		currentShoot,
+		NULL,
+		NULL,
+		element,
+		listTypeA);
 }
