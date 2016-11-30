@@ -21,6 +21,7 @@ ALLEGRO_BITMAP *shootA;
 ALLEGRO_BITMAP *enemyAImage = NULL;
 ALLEGRO_BITMAP *enemyBImage = NULL;
 ALLEGRO_BITMAP *enemyBulletImage = NULL;
+ALLEGRO_BITMAP *Boss[3];
 
 ALLEGRO_BITMAP *newNormal;
 ALLEGRO_BITMAP *newHover;
@@ -40,8 +41,11 @@ EntityList *listTypeB;
 Entity player;
 
 int shootLock;
+int gameStatus;
+
 bool canShoot;
 bool isBossSpawned;
+bool mouseFlag;
 
 int handleKeyEvents(ALLEGRO_EVENT ev, const bool * key);
 void update();
@@ -76,7 +80,7 @@ int main(int argc, char **argv) {
 
 	//game states and helpers
 	//FOR DEBUG
-	int gameStatus = HOME;
+	gameStatus = HOME;
 	//FOR DEBUG
 
 	int evtHandlderResult = 0;
@@ -95,6 +99,7 @@ int main(int argc, char **argv) {
 
 	canShoot = true;
 	isBossSpawned = false;
+	mouseFlag = false;
 
 	shootLock = 0;
 
@@ -142,16 +147,31 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 
-	al_reserve_samples(100);
+	al_reserve_samples(50);
 
 	playerShoot = al_load_sample("sounds/las0.wav");
-	enemyShoot = al_load_sample("sounds/las1.mp3");
-	playerDie = al_load_sample("sounds/exp0.mp3");
-	enemyDie = al_load_sample("sounds/exp1.mp3");
+	enemyShoot = al_load_sample("sounds/las1.wav");
+	playerDie = al_load_sample("sounds/exp0.wav");
+	enemyDie = al_load_sample("sounds/exp1.wav");
 
-	if (!playerShoot && !enemyShoot && !playerDie && !enemyDie) {
-	printf("Audio clip not loaded!\n");
-	return -1;
+	if (!playerShoot) {
+		printf("Audio playerShoot clip not loaded!\n");
+		return -1;
+	}
+
+	if (!enemyShoot) {
+		printf("Audio enemyShoot clip not loaded!\n");
+		return -1;
+	}
+
+	if (!playerDie) {
+		printf("Audio playerDie clip not loaded!\n");
+		return -1;
+	}
+
+	if (!enemyDie) {
+		printf("Audio enemyDie clip not loaded!\n");
+		return -1;
 	}
 
 	player.shoot = playerShoot;
@@ -184,6 +204,9 @@ int main(int argc, char **argv) {
 
 	shootA = al_create_sub_bitmap(mainImage, 224, 0, BULLET_SMALL_SIZE_X, BULLET_SMALL_SIZE_Y);
 	player.image = al_create_sub_bitmap(mainImage, 128, 0, player.size_x, player.size_y);
+	Boss[0] = al_create_sub_bitmap(mainImage, 0, IMAGE_SIZE_HEIGHT * 2, IMAGE_SIZE_WIDTH * 3, IMAGE_SIZE_HEIGHT * 3);
+	Boss[1] = al_create_sub_bitmap(mainImage, IMAGE_SIZE_WIDTH * 3, IMAGE_SIZE_HEIGHT * 2, IMAGE_SIZE_WIDTH * 3, IMAGE_SIZE_HEIGHT * 3);
+	Boss[2] = al_create_sub_bitmap(mainImage, 0, IMAGE_SIZE_HEIGHT * 5, IMAGE_SIZE_WIDTH * 3, IMAGE_SIZE_HEIGHT * 3);
 
 	if (!background[0]) {
 		al_show_native_message_box(display, "Error", "Error", "Failed to load image!",
@@ -266,6 +289,11 @@ int main(int argc, char **argv) {
 		}
 		else if (gameStatus == LV1 || gameStatus == LV2 || gameStatus == LV3)
 		{
+			if (!mouseFlag)
+			{
+				al_uninstall_mouse();
+				mouseFlag = true;
+			}
 			evtHandlderResult = handleKeyEvents(ev, key);
 
 			if (evtHandlderResult < 0) {
@@ -471,6 +499,7 @@ int handleKeyEvents(ALLEGRO_EVENT ev, bool * key)
 
 void update()
 {
+	bool helper = true;
 	EntityList * tempA = listTypeA;
 	Entity * elementA;
 
@@ -479,38 +508,67 @@ void update()
 
 	if (!isBossSpawned)
 	{
-		if (backgroundX >= -(SCREEN_W * 2)) {
-			backgroundX = backgroundX - .9;
+		if (backgroundX >= -((SCREEN_W) * 2)) 
+		{
+			backgroundX = backgroundX - 5;
 		}
 		else
 		{
 			isBossSpawned = true;
 			//spawn boss;
+			EntityList *tempBoss = listTypeB;
+			Entity *bossEnt = (Entity*)malloc(sizeof(Entity));
+			addEntityListElement(
+				IMAGE_SIZE_WIDTH * 3,
+				IMAGE_SIZE_HEIGHT * 3,
+				SCREEN_W - (IMAGE_SIZE_WIDTH * 3),
+				(SCREEN_H / 2) - ((IMAGE_SIZE_HEIGHT * 3) / 2),
+				0,
+				3,
+				MAIN_DAMAGE,
+				BOSS_LIFE,
+				BIG_BOSS,
+				Boss[gameStatus - 2],
+				enemyShoot,
+				enemyDie,
+				bossEnt,
+				tempBoss);
 		}
+	}
+
+	if (hasNext(tempA))
+	{
+		tempA = getNextEntityList(tempA);
+		elementA = tempA->entity;
 	}
 	else
 	{
-		//handle each level boss
-		//addEntityListElement()
+		elementA = &player;
 	}
 
-	while (hasNext(tempA))
+	while (helper)
 	{
-		tempA = getNextEntityList(tempA);
- 		elementA = tempA->entity;
-		if ((elementA->x <= SCREEN_W && (elementA->x + elementA->size_x) >= 0)
-			&& (elementA->y <= SCREEN_H && (elementA->y + elementA->size_y) >= 0))
+		helper = false;
+		if ((elementA->x < (SCREEN_W + 6) && (elementA->x + elementA->size_x) > -6)
+			&& (elementA->y < (SCREEN_H + 6) && (elementA->y + elementA->size_y) > -6))
 		{
-			elementA->x = elementA->x + elementA->speed_x;
-			elementA->y = elementA->y + elementA->speed_y;
+			if (elementA->type != PLAYER)
+			{
+				elementA->x = elementA->x + elementA->speed_x;
+				elementA->y = elementA->y + elementA->speed_y;
+			}
+
 			while (hasNext(tempB))
 			{
 				tempB = getNextEntityList(tempB);
 				elementB = tempB->entity;
 
-				if ((elementA->x <= SCREEN_W && (elementA->x + elementA->size_x) >= 0)
-					&& (elementA->y <= SCREEN_H && (elementA->y + elementA->size_y) >= 0))
+				if ((elementB->x < SCREEN_W + 6 && (elementB->x + elementB->size_x) > -6)
+					&& (elementB->y < SCREEN_H + 6 && (elementB->y + elementB->size_y) > -6))
 				{
+
+					elementB->x = elementB->x + elementB->speed_x;
+					elementB->y = elementB->y + elementB->speed_y;
 
 					//routines
 					if (elementB->type == ENEMY_STARCRAFT_INTELLIGENT)
@@ -519,10 +577,17 @@ void update()
 					}
 
 					//handle game status
-					if (elementB->type == BIG_BOSS && false) {}
-
-					elementB->x = elementB->x + elementB->speed_x;
-					elementB->y = elementB->y + elementB->speed_y;
+					if (elementB->type == BIG_BOSS) 
+					{
+						if (elementB->y < 0)
+						{
+							elementB->speed_y = 3;
+						}
+						else if (elementB->y + elementB->size_y > SCREEN_H)
+						{
+							elementB->speed_y = -3;
+						}
+					}
 
 					//colissions
 
@@ -533,18 +598,35 @@ void update()
 
 						if (elementA->life <= 0)
 						{
-							deleteElement(tempA);
+							if (elementA->type != PLAYER)
+							{
+								deleteElement(tempA);
+							}
+							else
+							{
+								al_play_sample(player.die, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
+								gameStatus = NO_LIFE;
+							}
 						}
 
 						if (elementB->life <= 0)
 						{
+							if (elementB->type != ENEMY_BULLET)
+							{
+								al_play_sample(elementB->die, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
+							}
+							
 							if (elementB->type == BIG_BOSS)
 							{
-								//handel new game status
+								isBossSpawned = false;
+								backgroundX = 0;
+								gameStatus++;
 							}
 							deleteElement(tempB);
 						}
+
 					}
+
 				}
 				else
 				{
@@ -555,6 +637,12 @@ void update()
 		else
 		{
 			deleteElement(tempA);
+		}
+		if (hasNext(tempA))
+		{
+			tempA = getNextEntityList(tempA);
+			elementA = tempA->entity;
+			helper = true;
 		}
 	}
 
@@ -590,7 +678,7 @@ void handlePlayerShoot()
 		0,
 		BULLET_SMALL_DAMAGE,
 		BULLET_LIFE,
-		FRENDLY,
+		FRENDLY_BULLET,
 		shootA,
 		NULL,
 		NULL,
