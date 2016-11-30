@@ -506,6 +506,12 @@ void update()
 	EntityList * tempB = listTypeB;
 	Entity * elementB;
 
+	shootLock++;
+	if (shootLock > SHOOT_LOCK) {
+		canShoot = true;
+		shootLock = 0;
+	}
+
 	if (!isBossSpawned)
 	{
 		enemySpawnCounter++;
@@ -518,7 +524,7 @@ void update()
 		}
 
 		if (backgroundX >= -(SCREEN_W * 2)) {
-			backgroundX = backgroundX - .9;
+			backgroundX = backgroundX - 5;
 		}
 		else
 		{
@@ -573,28 +579,30 @@ void update()
 
 				if ((elementB->x < SCREEN_W + 6 && (elementB->x + elementB->size_x) > -6)
 					&& (elementB->y < SCREEN_H + 6 && (elementB->y + elementB->size_y) > -6))
-				{
-
-					elementB->x = elementB->x + elementB->speed_x;
-					elementB->y = elementB->y + elementB->speed_y;
-
-					//routines
-					if (elementB->type == ENEMY_STARCRAFT_INTELLIGENT)
+				{	
+					if (elementB->updateFlag)
 					{
-						intelligentEnemyMove(player, elementB);
-					}
+						elementB->updateFlag = false;
+						//routines
+						if (elementB->type == ENEMY_STARCRAFT_INTELLIGENT)
+						{
+							intelligentEnemyMove(player, elementB);
+						}
 
-					//handle game status
-					if (elementB->type == BIG_BOSS) 
-					{
-						if (elementB->y < 0)
+						if (elementB->type == BIG_BOSS) 
 						{
-							elementB->speed_y = 3;
+							if (elementB->y < 0)
+							{
+								elementB->speed_y = 3;
+							}
+							else if (elementB->y + elementB->size_y > SCREEN_H)
+							{
+								elementB->speed_y = -3;
+							}
 						}
-						else if (elementB->y + elementB->size_y > SCREEN_H)
-						{
-							elementB->speed_y = -3;
-						}
+						elementB->x = elementB->x + elementB->speed_x;
+						elementB->y = elementB->y + elementB->speed_y;
+						elementB->updateFlag = false;
 					}
 
 					//colissions
@@ -621,11 +629,12 @@ void update()
 						{
 							if (elementB->type != ENEMY_BULLET)
 							{
-								al_play_sample(elementB->die, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
+								
 							}
 							
 							if (elementB->type == BIG_BOSS)
 							{
+								al_play_sample(elementB->die, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
 								isBossSpawned = false;
 								backgroundX = 0;
 								gameStatus++;
@@ -653,12 +662,7 @@ void update()
 			helper = true;
 		}
 	}
-
-	shootLock++;
-	if (shootLock > SHOOT_LOCK) {
-		canShoot = true;
-		shootLock = 0;
-	}
+	setFlagEnabled(true, listTypeB);
 	
 }
 

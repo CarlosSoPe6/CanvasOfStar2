@@ -9,6 +9,7 @@ typedef struct ennts
 	float damage;
 	float life;
 	int type;
+	bool updateFlag;
 	ALLEGRO_BITMAP *image;
 	ALLEGRO_SAMPLE *shoot;
 	ALLEGRO_SAMPLE *die;
@@ -85,6 +86,7 @@ void addEntityListElement(
 	element->shoot = shoot;
 	element->die = die;
 	element->type = type;
+	element->updateFlag = true;
 
 	
 	current->next = (EntityList *)malloc(sizeof(EntityList));
@@ -132,4 +134,19 @@ void deleteElement(EntityList * element)
 	
 	element->prev->next = element->next;
 	element = tempElement;
+}
+
+/**
+ * param propery
+ * param: EntityList * element
+ */
+void setFlagEnabled(bool propery, EntityList * element)
+{
+	EntityList * current = element;
+
+	while (current->next != NULL)
+	{
+		current = current->next;
+		current->entity->updateFlag = propery;
+	}
 }
