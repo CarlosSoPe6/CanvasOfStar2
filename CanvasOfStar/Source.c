@@ -43,10 +43,11 @@ Entity player;
 int shootLock;
 int gameStatus;
 
+int enemySpawnCounter;
+
 bool canShoot;
 bool isBossSpawned;
 bool mouseFlag;
-bool enemySpawned;
 
 int handleKeyEvents(ALLEGRO_EVENT ev, const bool * key);
 void update();
@@ -99,9 +100,9 @@ int main(int argc, char **argv) {
 	canShoot = true;
 	isBossSpawned = false;
 	mouseFlag = false;
-	enemySpawned = false;
 
 	shootLock = 0;
+	enemySpawnCounter = 0;
 
 	if (!al_init()) {
 		al_show_native_message_box(display, "Error", "Error", "Failed to initialize allegro!",
@@ -200,7 +201,7 @@ int main(int argc, char **argv) {
 	insHover = al_create_sub_bitmap(mainButtons, 0, 150, BUTTON_W, BUTTON_H);
 
 	enemyAImage = al_load_bitmap("images/_b1.png");
-	enemyAImage = al_load_bitmap("images/_b2.png");
+	enemyBImage = al_load_bitmap("images/_b2.png");
 
 	shootA = al_create_sub_bitmap(mainImage, 224, 0, BULLET_SMALL_SIZE_X, BULLET_SMALL_SIZE_Y);
 	player.image = al_create_sub_bitmap(mainImage, 128, 0, player.size_x, player.size_y);
@@ -502,12 +503,18 @@ void update()
 	bool helper = true;
 	EntityList * tempA = listTypeA;
 	Entity * elementA;
-
 	EntityList * tempB = listTypeB;
 	Entity * elementB;
 
 	if (!isBossSpawned)
 	{
+		enemySpawnCounter++;
+		if (enemySpawnCounter % 450 == 0)
+		{
+			spawnEnemies();
+			enemySpawnCounter = 0;
+		}
+
 		if (backgroundX >= -(SCREEN_W * 2)) {
 			backgroundX = backgroundX - .9;
 		}
@@ -687,12 +694,7 @@ void handlePlayerShoot()
 }
 
 void spawnEnemies()
-
 {
-	if (enemySpawned)
-		return;
-
-	enemySpawned = true;
 	int dy = (rand() % (SCREEN_H - 96)); //El valor de 'y' donde va a hacer spawn
 	int enemyType;
 
@@ -713,7 +715,7 @@ void spawnEnemies()
 	addEntityListElement(
 		IMAGE_SIZE_HEIGHT * 2,
 		IMAGE_SIZE_WIDTH * 2,
-		SCREEN_W,
+		SCREEN_W -50,
 		dy,
 		ENEMY_SPEED_X,
 		0,
