@@ -46,7 +46,7 @@ bool intersecs(float aX, float aY, int aSize_x, int aSize_y, float bX, float bY,
 	{
 		if (((aY) <= (bY + bSize_y)) && ((aY + aSize_y) >= (bY + bSize_y)))
 		{
-			return true;
+  			return true;
 		}
 	}
 	return false;
