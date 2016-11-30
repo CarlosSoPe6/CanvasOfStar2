@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
 	mouseFlag = false;
 
 	shootLock = 0;
-	enemySpawnCounter = 0;
+	enemySpawnCounter = 222;
 
 	if (!al_init()) {
 		al_show_native_message_box(display, "Error", "Error", "Failed to initialize allegro!",
@@ -200,8 +200,8 @@ int main(int argc, char **argv) {
 	insNormal = al_create_sub_bitmap(mainButtons, 0, 100, BUTTON_W, BUTTON_H);
 	insHover = al_create_sub_bitmap(mainButtons, 0, 150, BUTTON_W, BUTTON_H);
 
-	enemyAImage = al_load_bitmap("images/_b1.png");
-	enemyBImage = al_load_bitmap("images/_b2.png");
+	enemyAImage = al_create_sub_bitmap(mainImage, 0, 0, IMAGE_SIZE_WIDTH * 2, IMAGE_SIZE_HEIGHT *2);
+	enemyBImage = al_create_sub_bitmap(mainImage, 64, 0, IMAGE_SIZE_WIDTH * 2, IMAGE_SIZE_HEIGHT * 2);
 
 	shootA = al_create_sub_bitmap(mainImage, 224, 0, BULLET_SMALL_SIZE_X, BULLET_SMALL_SIZE_Y);
 	player.image = al_create_sub_bitmap(mainImage, 128, 0, player.size_x, player.size_y);
@@ -512,6 +512,8 @@ void update()
 		if (enemySpawnCounter % 450 == 0)
 		{
 			spawnEnemies();
+			spawnEnemies();
+			spawnEnemies();
 			enemySpawnCounter = 0;
 		}
 
@@ -715,7 +717,7 @@ void spawnEnemies()
 	addEntityListElement(
 		IMAGE_SIZE_HEIGHT * 2,
 		IMAGE_SIZE_WIDTH * 2,
-		SCREEN_W -50,
+		SCREEN_W,
 		dy,
 		ENEMY_SPEED_X,
 		0,
