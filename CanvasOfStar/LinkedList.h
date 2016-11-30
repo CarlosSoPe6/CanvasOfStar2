@@ -8,6 +8,7 @@ typedef struct ennts
 	float speed_y;
 	float damage;
 	float life;
+	int type;
 	ALLEGRO_BITMAP *image;
 	ALLEGRO_SAMPLE *shoot;
 	ALLEGRO_SAMPLE *die;
@@ -54,6 +55,7 @@ void addEntityListElement(
 	float speed_y, 
 	float damage, 
 	float life, 
+	int type,
 	ALLEGRO_BITMAP * image, 
 	ALLEGRO_SAMPLE * shoot, 
 	ALLEGRO_SAMPLE * die, 
@@ -82,6 +84,7 @@ void addEntityListElement(
 	element->image = image;
 	element->shoot = shoot;
 	element->die = die;
+	element->type = type;
 
 	
 	current->next = (EntityList *)malloc(sizeof(EntityList));
