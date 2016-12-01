@@ -787,6 +787,7 @@ void handlePlayerShoot()
 		return;
 	}
 	canShoot = false;
+	//aquí se reproduce
 	al_play_sample(player.shoot, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
 	float buX = 0.0;
 	float buY = 0.0;
@@ -794,8 +795,10 @@ void handlePlayerShoot()
 	buX = getBulletX(player, GETTER_PLAYER_XY);
 	buY = getBulletY(player);
 
+	//reservamos meoria para la entidad de la bala
 	Entity * element = (Entity *)malloc(sizeof(Entity));
 
+	//inicializamos la bala
 	addEntityListElement(
 		BULLET_SMALL_SIZE_X,
 		BULLET_SMALL_SIZE_Y,
@@ -811,6 +814,7 @@ void handlePlayerShoot()
 		NULL,
 		element,
 		listTypeA);
+
 }
 
 void spawnEnemies()
