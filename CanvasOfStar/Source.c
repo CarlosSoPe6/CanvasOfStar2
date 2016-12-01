@@ -36,6 +36,16 @@ ALLEGRO_BITMAP *insHover;
 
 //background
 ALLEGRO_BITMAP *background[3];
+ALLEGRO_BITMAP *gameOver;
+ALLEGRO_BITMAP *youWon;
+ALLEGRO_BITMAP *instructions;
+
+ALLEGRO_BITMAP *chooseDificult;
+ALLEGRO_BITMAP *dificults;
+ALLEGRO_BITMAP *easyA;
+ALLEGRO_BITMAP *easyB;
+ALLEGRO_BITMAP *hardA;
+ALLEGRO_BITMAP *hardB;
 
 // List aux
 EntityList *listTypeA;
@@ -209,6 +219,18 @@ int main(int argc, char **argv) {
 
 	mainImage = al_load_bitmap("images/SPRITES.png");
 
+	youWon = al_load_bitmap("images/YouWin.png");
+	gameOver = al_load_bitmap("images/GameOver.png");
+	instructions = al_load_bitmap("images/instrucciones.png");
+
+	chooseDificult = al_load_bitmap("images/difficult.png");
+
+	dificults = al_load_bitmap("images/dificultad.jpg");
+	easyA = al_create_sub_bitmap(dificults, 0, 0, BUTTON_W, BUTTON_H);
+	easyB = al_create_sub_bitmap(dificults, 0, 50, BUTTON_W, BUTTON_H);
+	hardA = al_create_sub_bitmap(dificults, 0, 100, BUTTON_W, BUTTON_H);
+	hardB = al_create_sub_bitmap(dificults, 0, 150, BUTTON_W, BUTTON_H);
+
 	mainButtons = al_load_bitmap("images/BUTTONS.jpg");
 	newNormal = al_create_sub_bitmap(mainButtons, 0, 0, BUTTON_W, BUTTON_H);
 	newHover = al_create_sub_bitmap(mainButtons, 0, 50, BUTTON_W, BUTTON_H);
@@ -301,12 +323,7 @@ int main(int argc, char **argv) {
 			continue;
 		}
 
-		if(gameStatus == NO_LIFE)
-		{
-
-		}
-
-		if (gameStatus == HOME || gameStatus == INSTRUCTIONS)
+		if (gameStatus == HOME || gameStatus == INSTRUCTIONS || gameStatus == CHOOSE_DIFFICULT)
 		{
 
 			if (ev.type == ALLEGRO_EVENT_MOUSE_AXES ||
@@ -344,12 +361,22 @@ int main(int argc, char **argv) {
 		}
 		else if (gameStatus == NO_LIFE)
 		{
+			al_draw_bitmap(gameOver, 0, 0, 0);
+			al_flip_display();
 
+			al_rest(3);
+			break;
 		}
 		else if (gameStatus == WON)
 		{
+			al_draw_bitmap(youWon, 0, 0, 0);
+			al_flip_display();
 
+			al_rest(3);
+			break;
 		}
+
+		//UPDATE
 
 		if (gameStatus >= LV1 && gameStatus <= LV3) {
 
@@ -400,7 +427,7 @@ int main(int argc, char **argv) {
 				al_draw_bitmap(newHover, 100, 300, 0);
 				if (clicked)
 				{
-					gameStatus = LV1;
+					gameStatus = CHOOSE_DIFFICULT;
 					clicked = false;
 				}
 			}
@@ -427,22 +454,47 @@ int main(int argc, char **argv) {
 		}
 		else if (redraw && gameStatus == INSTRUCTIONS)
 		{
+			al_draw_bitmap(instructions, 0, 0, 0);
+			al_flip_display();
+
+			al_rest(5);
+			gameStatus = HOME;
+		}
+		else if (gameStatus == CHOOSE_DIFFICULT)
+		{
 			redraw = false;
 			al_clear_to_color(al_map_rgb(0, 0, 0));
+
 			if (mx >= 100 && mx <= 100 + BUTTON_W && my >= 300 && my <= 300 + BUTTON_H)
 			{
-				al_draw_bitmap(newHover, 100, 300, 0);
+				al_draw_bitmap(easyB, 100, 300, 0);
 				if (clicked)
 				{
 					gameStatus = LV1;
+					clicked = false;
+					hardCore = false;
+				}
+			}
+			else
+			{
+				al_draw_bitmap(easyA, 100, 300, 0);
+			}
+
+			if (mx >= 900 && mx <= 900 + BUTTON_W && my >= 300 && my <= 300 + BUTTON_H)
+			{
+				al_draw_bitmap(hardB, 900, 300, 0);
+				if (clicked)
+				{
+					gameStatus = LV1;
+					hardCore = true;
 					clicked = false;
 				}
 			}
 			else
 			{
-				al_draw_bitmap(newNormal, 100, 300, 0);
+				al_draw_bitmap(hardA, 900, 300, 0);
 			}
-
+			
 			al_flip_display();
 		}
 
@@ -670,7 +722,7 @@ void update()
 					}
 					//colissions
 
-					if (colission(*elementA, *elementB))
+					if (colission(elementA, elementB))
 					{
 						elementA->life = elementA->life - elementB->damage;
 						elementB->life = elementB->life - elementA->damage;
