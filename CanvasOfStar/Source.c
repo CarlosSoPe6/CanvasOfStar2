@@ -712,7 +712,6 @@ void update()
 							if (enemySpawnCounter % 160 == 0)
 							{
 								handleEnemyShoot(*elementB);
-								printf_s("Hola");
 							}
 			
 						}
