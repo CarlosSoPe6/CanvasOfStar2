@@ -97,6 +97,8 @@ int main(int argc, char **argv) {
 	player.speed_y = SPEED_LIMIT;
 	player.x = SCREEN_W / 2.0 - player.size_x / 2.0;
 	player.y = SCREEN_H / 2.0 - player.size_y / 2.0;
+	player.life = PLAYER_LIFE;
+	player.damage = MAIN_DAMAGE;
 	
 	bool key[5] = { false, false, false, false, false };
 	bool redraw = true;
@@ -352,9 +354,6 @@ int main(int argc, char **argv) {
 			
 			al_draw_bitmap(background[gameStatus - 2], backgroundX, 0, 0);
 
-			//PLAYER LIFE
-			al_draw_filled_rectangle(0, 0, (int)player.life, IMAGE_SIZE_HEIGHT, al_map_rgb(31, 168, 52));
-
 			EntityList * temp = listTypeA;
 			Entity * element;
 
@@ -374,6 +373,12 @@ int main(int argc, char **argv) {
 				element = temp->entity;
 
 				al_draw_bitmap(element->image, element->x, element->y, 0);
+
+				if (element->type == BIG_BOSS)
+				{
+					//BOSS LIFE
+					al_draw_filled_rectangle(0, 0, (int)(element->life / 2), IMAGE_SIZE_HEIGHT, al_map_rgb(31, 168, 52));
+				}
 			}
 
 			al_draw_bitmap(player.image, player.x, player.y, 0);
@@ -665,10 +670,6 @@ void update()
 						elementA->life = elementA->life - elementB->damage;
 						elementB->life = elementB->life - elementA->damage;
 
-						if (elementA->life <= 0)
-						{
-						}
-
 						if (elementB->life <= 0)
 						{
 							if (elementB->type != ENEMY_BULLET)
@@ -685,16 +686,20 @@ void update()
  							deleteElement(tempB);
 						}
 
-						if (elementA->type != PLAYER)
+						if (elementA->life <= 0)
 						{
-							deleteElement(tempA);
-							break;
+							if (elementA->type != PLAYER)
+							{
+								deleteElement(tempA);
+								break;
+							}
+							else
+							{
+								al_play_sample(player.die, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
+								gameStatus = NO_LIFE;
+							}
 						}
-						else
-						{
-							al_play_sample(player.die, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
-							gameStatus = NO_LIFE;
-						}
+						
 
 					}
 

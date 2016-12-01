@@ -26,6 +26,7 @@
 
 #define SHOOT_LOCK 20
 
+#define PLAYER_LIFE 400
 #define ENEMY_LIFE 200
 #define ENEMY_DAMAGE 1000
 #define ENEMY_SPEED_X -2
