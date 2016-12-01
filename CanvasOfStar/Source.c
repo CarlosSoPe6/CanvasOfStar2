@@ -301,6 +301,11 @@ int main(int argc, char **argv) {
 			continue;
 		}
 
+		if(gameStatus == NO_LIFE)
+		{
+
+		}
+
 		if (gameStatus == HOME || gameStatus == INSTRUCTIONS)
 		{
 
