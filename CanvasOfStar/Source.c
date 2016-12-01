@@ -3,6 +3,7 @@ float backgroundX = 0.0;
 #include <stdio.h>
 #include <time.h>
 #include "allegro5/allegro.h"
+#include "allegro5/allegro_primitives.h"
 #include "allegro5/allegro_image.h"
 #include "allegro5/allegro_native_dialog.h"
 #include "allegro5/allegro_audio.h"
@@ -51,6 +52,7 @@ int enemySpawnCounter;
 bool canShoot;
 bool isBossSpawned;
 bool mouseFlag;
+bool hardCore;
 
 int handleKeyEvents(ALLEGRO_EVENT ev, const bool * key);
 void update();
@@ -104,6 +106,7 @@ int main(int argc, char **argv) {
 	canShoot = true;
 	isBossSpawned = false;
 	mouseFlag = false;
+	hardCore = false;
 
 	shootLock = 0;
 	enemySpawnCounter = 222;
@@ -128,6 +131,12 @@ int main(int argc, char **argv) {
 	if (!timer) {
 		fprintf(stderr, "failed to create timer!\n");
 		return -1;
+	}
+
+	if (!al_init_primitives_addon()) {
+		al_show_native_message_box(display, "Error", "Error", "Failed to initialize al_init_image_addon!",
+			NULL, ALLEGRO_MESSAGEBOX_ERROR);
+		return 0;
 	}
 
 	if (!al_init_image_addon()) {
@@ -317,6 +326,9 @@ int main(int argc, char **argv) {
 				al_uninstall_mouse();
 				mouseFlag = true;
 			}
+
+			update();
+
 			evtHandlderResult = handleKeyEvents(ev, key);
 
 			if (evtHandlderResult < 0) 
@@ -327,8 +339,6 @@ int main(int argc, char **argv) {
 				doexit = true;
 				continue;
 			}
-
-			update();
 		}
 		else if (gameStatus == NO_LIFE)
 		{
@@ -346,6 +356,9 @@ int main(int argc, char **argv) {
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 			
 			al_draw_bitmap(background[gameStatus - 2], backgroundX, 0, 0);
+
+			//PLAYER LIFE
+			al_draw_filled_rectangle(0, 0, (int)player.life, IMAGE_SIZE_HEIGHT, al_map_rgb(31, 168, 52));
 
 			EntityList * temp = listTypeA;
 			Entity * element;
@@ -427,6 +440,7 @@ int main(int argc, char **argv) {
 
 			al_flip_display();
 		}
+
 	}
 
 	al_destroy_bitmap(player.image);
@@ -527,7 +541,6 @@ int handleKeyEvents(ALLEGRO_EVENT ev, bool * key)
 	return 2;
 }
 
-
 void update()
 {
 	bool helper = true;
@@ -617,9 +630,12 @@ void update()
 					{
 						elementB->updateFlag = false;
 						//routines
-						if (elementB->type == ENEMY_STARCRAFT_INTELLIGENT)
+						if (hardCore)
 						{
-							intelligentEnemyMove(player, elementB);
+							if (elementB->type == ENEMY_STARCRAFT_INTELLIGENT)
+							{
+								intelligentEnemyMove(player, elementB);
+							}
 						}
 						if ((elementB->type == ENEMY_STARCRAFT || elementB->type == ENEMY_STARCRAFT_INTELLIGENT) && enemySpawnCounter % 160 == 0)
 						{
@@ -628,7 +644,6 @@ void update()
 
 						if (elementB->type == BIG_BOSS) 
 						{
-							printf_s("Hola\n");
 							if (elementB->y < 0)
 							{
 								elementB->speed_y = 3;
@@ -650,24 +665,13 @@ void update()
 					}
 					//colissions
 
-					if (colission(elementA, elementB))
+					if (colission(*elementA, *elementB))
 					{
 						elementA->life = elementA->life - elementB->damage;
 						elementB->life = elementB->life - elementA->damage;
 
-						printf_s("WE HAVE A COLLITION\n");
-
 						if (elementA->life <= 0)
 						{
-							if (elementA->type != PLAYER)
-							{
-								deleteElement(tempA);
-							}
-							else
-							{
-								al_play_sample(player.die, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
-								gameStatus = NO_LIFE;
-							}
 						}
 
 						if (elementB->life <= 0)
@@ -683,7 +687,18 @@ void update()
 								backgroundX = 0;
 								gameStatus++;
 							}
-							deleteElement(tempB);
+ 							deleteElement(tempB);
+						}
+
+						if (elementA->type != PLAYER)
+						{
+							deleteElement(tempA);
+							break;
+						}
+						else
+						{
+							al_play_sample(player.die, SAMPLE_GAIN, SAMPLE_PAN, SAMPLE_SPEED, SAMPLE_PLAY_ONCE, NULL);
+							gameStatus = NO_LIFE;
 						}
 
 					}
@@ -829,5 +844,5 @@ void handleEnemyShoot(Entity enemy)
 		NULL,
 		NULL,
 		element,
-		listTypeA);
+		listTypeB);
 }
