@@ -701,14 +701,20 @@ void update()
 
 						if (elementB->type == BIG_BOSS) 
 						{
-							if (elementB->y < 0)
+							if (elementB->y < 0 && gameStatus != LV3)
 							{
 								elementB->speed_y = 3;
 							}
-							else if (elementB->y + elementB->size_y > SCREEN_H)
+							else if (elementB->y + elementB->size_y > SCREEN_H && gameStatus != LV3)
 							{
 								elementB->speed_y = -3;
 							}
+
+							if (gameStatus == LV3)
+							{
+								intelligentEnemyMove(player, elementB);
+							}
+
 							if (enemySpawnCounter % 160 == 0)
 							{
 								handleEnemyShoot(*elementB);
@@ -735,6 +741,10 @@ void update()
 							
 							if (elementB->type == BIG_BOSS)
 							{
+								if (!hardCore)
+								{
+									player.life = PLAYER_LIFE;
+								}
 								isBossSpawned = false;
 								backgroundX = 0;
 								gameStatus++;
