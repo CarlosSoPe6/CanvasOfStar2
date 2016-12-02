@@ -70,7 +70,7 @@ void handlePlayerShoot();
 void handleEnemyShoot(Entity enemy);
 void spawnEnemies();
 
-float  getBulletX(Entity element, int type);
+float getBulletX(Entity element, int type);
 float getBulletY(Entity element);
 
 int main(int argc, char **argv) {
