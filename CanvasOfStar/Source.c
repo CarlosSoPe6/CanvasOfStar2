@@ -675,7 +675,7 @@ void update()
 					}
 					//colissions
 
-					if (colission(*elementA, *elementB))
+					if (colission(elementA, elementB))
 					{
 						elementA->life = elementA->life - elementB->damage;
 						elementB->life = elementB->life - elementA->damage;
